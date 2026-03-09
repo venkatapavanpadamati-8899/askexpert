@@ -1,0 +1,58 @@
+<script>
+
+let verified = false;
+
+// Send OTP
+function sendOTP(){
+
+let otp = Math.floor(100000 + Math.random() * 900000);
+
+alert("Your OTP is: " + otp);
+
+localStorage.setItem("otp", otp);
+
+}
+
+// Verify OTP
+function verifyOTP(){
+
+let entered = document.getElementById("otp").value;
+
+let real = localStorage.getItem("otp");
+
+if(entered == real){
+
+alert("OTP Verified ✅");
+
+verified = true;
+
+}else{
+
+alert("Invalid OTP ❌");
+
+verified = false;
+
+}
+
+}
+
+// Register user
+function registerUser(){
+
+if(!verified){
+
+alert("Please verify OTP first!");
+
+return false;
+
+}
+
+alert("Registration Successful!");
+
+window.location.href="login.html";
+
+return false;
+
+}
+
+</script>

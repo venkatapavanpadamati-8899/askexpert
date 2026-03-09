@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Expert Dashboard</title>
+
+<style>
+
+body{
+font-family:Arial;
+margin:0;
+background:#f4f4f4;
+padding:30px;
+}
+
+h1{
+text-align:center;
+}
+
+.filter{
+text-align:center;
+margin-bottom:20px;
+}
+
+select{
+padding:10px;
+border-radius:5px;
+}
+
+.question-card{
+background:white;
+padding:20px;
+margin:15px auto;
+max-width:600px;
+border-radius:10px;
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+textarea{
+width:100%;
+height:80px;
+margin-top:10px;
+padding:10px;
+border-radius:5px;
+border:1px solid #ccc;
+}
+
+button{
+margin-top:10px;
+padding:10px 15px;
+background:#007bff;
+border:none;
+color:white;
+border-radius:5px;
+cursor:pointer;
+}
+
+button:hover{
+background:#0056b3;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>Expert Dashboard</h1>
+
+<div class="filter">
+
+<label>Select Profession:</label>
+
+<select id="professionFilter" onchange="filterQuestions()">
+
+<option value="All">All</option>
+<option value="Lawyer">Lawyer</option>
+<option value="Doctor">Doctor</option>
+<option value="Teacher">Teacher</option>
+<option value="Engineer">Engineer</option>
+<option value="Police">Police</option>
+
+</select>
+
+</div>
+
+<div id="questionsContainer"></div>
+
+<script>
+
+let questions = JSON.parse(localStorage.getItem("questions")) || [];
+
+function loadQuestions(filter="All"){
+
+let container = document.getElementById("questionsContainer");
+
+container.innerHTML="";
+
+questions.forEach(function(q,index){
+
+if(filter==="All" || q.expert===filter){
+
+let div = document.createElement("div");
+
+div.className="question-card";
+
+div.innerHTML=`
+
+<p><b>Question:</b> ${q.question}</p>
+
+<p><b>Expert Required:</b> ${q.expert}</p>
+
+<textarea placeholder="Write your answer"></textarea>
+
+<button onclick="submitAnswer()">Submit Answer</button>
+
+<hr>
+
+`;
+
+container.appendChild(div);
+
+}
+
+});
+
+}
+
+function filterQuestions(){
+
+let selected = document.getElementById("professionFilter").value;
+
+loadQuestions(selected);
+
+}
+
+function submitAnswer(){
+
+alert("Answer submitted successfully!");
+
+}
+
+loadQuestions();
+
+</script>
+
+</body>
+</html>
