@@ -160,6 +160,7 @@ label { font-size:14px; color:#555; display:block; margin-top:10px; text-align:l
 <script>
 let verified = false;
 
+// OTP Functions
 function sendOTP() {
     let otp = Math.floor(100000 + Math.random() * 900000);
     alert("Your OTP is: " + otp);
@@ -174,6 +175,7 @@ function verifyOTP() {
     else { alert("Invalid OTP ❌"); verified = false; }
 }
 
+// Enable/Disable Professional Fields
 function toggleProfession() {
     let type = document.getElementById("accountType").value;
     let profession = document.getElementById("profession");
@@ -194,15 +196,21 @@ function toggleProfession() {
     }
 }
 
-// Simulate AI Certificate Verification
+// Simulated AI Certificate Verification
 function checkCertificate(){
     let file=document.getElementById("certificateUpload").files[0];
     if(!file) return null;
     let name=file.name.toLowerCase();
-    if(name.includes("mbbs") || name.includes("llb") || name.includes("btech") || name.includes("degree") || name.includes("diploma")) return "verified";
-    else return "pending";
+    if(name.includes("mbbs") || name.includes("llb") || name.includes("btech") || name.includes("degree") || name.includes("diploma")) {
+        alert("AI Verification Success: Government Verified Certificate ✅");
+        return "verified";
+    } else {
+        alert("AI cannot confirm certificate. Sending to Admin ⏳");
+        return "pending";
+    }
 }
 
+// Registration Function
 function registerUser() {
     if (!verified) { alert("Please verify OTP first!"); return false; }
 
