@@ -3,212 +3,218 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AskExpert Professional Dashboard</title>
+
+<title>AskExpert Platform</title>
 
 <link rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
 
+/* GLOBAL RESET */
+
 *{
+box-sizing:border-box;
 margin:0;
 padding:0;
-box-sizing:border-box;
-font-family:Segoe UI, Arial;
+font-family:'Segoe UI',Arial,sans-serif;
 }
+
+/* BODY */
 
 body{
-min-height:100vh;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+
 background:
-linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.7)),
-url("https://images.unsplash.com/photo-1553877522-43269d4ea984");
-background-size:cover;
-background-position:center;
-padding:30px;
+linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.4)),
+url("https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=1600")
+center/cover no-repeat;
+
+animation:bgPulse 10s ease-in-out infinite alternate;
 }
+
+/* BACKGROUND ANIMATION */
+
+@keyframes bgPulse{
+0%{filter:brightness(1);}
+50%{filter:brightness(1.1);}
+100%{filter:brightness(1);}
+}
+
+/* MAIN CARD */
 
 .container{
-max-width:950px;
-margin:auto;
-background:rgba(255,255,255,0.95);
-padding:40px;
-border-radius:18px;
-box-shadow:0 20px 40px rgba(0,0,0,0.3);
-}
-
-.header{
 text-align:center;
-margin-bottom:25px;
+background:rgba(255,255,255,0.15);
+backdrop-filter:blur(15px);
+padding:60px;
+border-radius:25px;
+box-shadow:0 25px 60px rgba(0,0,0,0.4);
+color:white;
+max-width:520px;
+animation:fadeIn 1s,floatCard 6s ease-in-out infinite;
 }
 
-.header img{
-width:70px;
+/* TITLE */
+
+.title{
+font-size:42px;
+font-weight:700;
 margin-bottom:10px;
 }
 
-h1{color:#333;}
+.title span{
+color:#ffd54f;
+}
 
-.icons{
-text-align:center;
+/* SUBTITLE */
+
+.subtitle{
+font-size:18px;
+opacity:.9;
+margin-bottom:35px;
+}
+
+/* ICONS */
+
+.experts{
+display:flex;
+justify-content:center;
+gap:20px;
+margin-bottom:30px;
 font-size:28px;
-margin-top:10px;
-margin-bottom:15px;
 }
 
-.icons i{
-margin:0 10px;
-color:#4c6ef5;
+.experts i{
+background:rgba(255,255,255,0.2);
+padding:12px;
+border-radius:50%;
+transition:.3s;
 }
 
-.chat-link,.logout-btn{
-display:inline-block;
-margin-top:10px;
-padding:10px 20px;
-border-radius:6px;
-font-weight:bold;
-text-decoration:none;
-color:white;
+.experts i:hover{
+background:rgba(255,255,255,0.4);
+transform:scale(1.2);
 }
 
-.chat-link{background:#4c6ef5;}
-.chat-link:hover{background:#364fc7;}
+/* BUTTONS */
 
-.logout-btn{background:#f44336;}
-.logout-btn:hover{background:#c62828;}
-
-.filter{
-margin:25px 0;
-text-align:center;
-}
-
-select{
-padding:10px;
-border-radius:8px;
-border:1px solid #ccc;
-font-size:15px;
-}
-
-.question-card{
-background:white;
-padding:22px;
-margin:18px 0;
-border-radius:12px;
-box-shadow:0 8px 18px rgba(0,0,0,0.15);
-}
-
-textarea{
-width:100%;
-height:90px;
-margin-top:10px;
-padding:10px;
-border-radius:6px;
-border:1px solid #ccc;
-resize:none;
+.buttons{
+display:flex;
+gap:12px;
+justify-content:center;
+flex-wrap:wrap;
 }
 
 button{
-margin-top:10px;
-padding:10px 15px;
-background:#2ecc71;
-border:none;
+padding:14px 28px;
+border-radius:30px;
+font-size:18px;
 color:white;
-border-radius:6px;
+border:none;
 cursor:pointer;
-font-weight:bold;
+transition:.3s;
+display:flex;
+align-items:center;
+gap:8px;
 }
 
-button:hover{background:#27ae60;}
+/* BUTTON COLORS */
 
-.rating{
-margin-top:12px;
+.register{background:#28a745;}
+.register:hover{background:#1e7e34;transform:scale(1.1);}
+
+.login{background:#007bff;}
+.login:hover{background:#0056b3;transform:scale(1.1);}
+
+.ask{background:#ff9800;}
+.ask:hover{background:#e68900;transform:scale(1.1);}
+
+/* ANIMATIONS */
+
+@keyframes fadeIn{
+from{opacity:0;transform:translateY(-30px);}
+to{opacity:1;transform:translateY(0);}
 }
 
-.rating button{
-background:#ffc107;
-color:black;
-margin:3px;
+@keyframes floatCard{
+0%{transform:translateY(0px);}
+50%{transform:translateY(-10px);}
+100%{transform:translateY(0px);}
 }
 
-.timestamp{
-font-size:12px;
-color:gray;
-margin-top:5px;
-}
+/* MOBILE */
 
-.answer-box{
-background:#f4f6ff;
-padding:10px;
-border-radius:6px;
-margin-top:10px;
+@media(max-width:500px){
+
+.container{padding:35px;}
+
+.title{font-size:32px;}
+
+.subtitle{font-size:16px;}
+
 }
 
 </style>
 </head>
 
-<body onload="initDashboard()">
+<body>
 
 <div class="container">
 
-<div class="header">
+<h1 class="title">Ask<span>Expert</span></h1>
 
-<img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
+<p class="subtitle">
+Ask questions from verified professionals like Lawyers, Doctors, Teachers, and Engineers.
+</p>
 
-<h1>AskExpert Professional Dashboard</h1>
+<div class="experts">
 
-<div class="icons">
-<i class="fa-solid fa-user-doctor"></i>
-<i class="fa-solid fa-scale-balanced"></i>
-<i class="fa-solid fa-laptop-code"></i>
-<i class="fa-solid fa-graduation-cap"></i>
-</div>
-
-<a href="chat.html" class="chat-link">💬 Open Chat</a>
-<a href="#" class="logout-btn" onclick="logout()">Logout</a>
+<i class="fa-solid fa-user-doctor" title="Doctor"></i>
+<i class="fa-solid fa-scale-balanced" title="Lawyer"></i>
+<i class="fa-solid fa-laptop-code" title="Engineer"></i>
+<i class="fa-solid fa-graduation-cap" title="Teacher"></i>
 
 </div>
 
-<div class="filter">
+<div class="buttons">
 
-<label>Select Profession:</label>
+<button class="register" onclick="goRegister()">
+<i class="fa-solid fa-user-plus"></i> Register
+</button>
 
-<select id="professionFilter" onchange="filterQuestions()">
+<button class="login" onclick="goLogin()">
+<i class="fa-solid fa-right-to-bracket"></i> Login
+</button>
 
-<option value="All">All</option>
-<option value="lawyer">Lawyer</option>
-<option value="doctor">Doctor</option>
-<option value="engineer">Engineer</option>
-<option value="teacher">Teacher</option>
-<option value="police">Police</option>
-<option value="business">Business Expert</option>
-<option value="finance">Financial Expert</option>
-<option value="marketing">Marketing Expert</option>
-<option value="startup">Startup Mentor</option>
-<option value="it">IT Support</option>
-<option value="psychologist">Psychologist</option>
-<option value="career">Career Advisor</option>
-
-</select>
+<button class="ask" onclick="goToAsk()">
+<i class="fa-solid fa-question"></i> Ask Question
+</button>
 
 </div>
-
-<div id="questionsContainer"></div>
 
 </div>
 
 <script>
 
-/* SAFE JSON */
+/* SAFE JSON FUNCTION */
 
 function getData(key){
+
 try{
-let data=JSON.parse(localStorage.getItem(key));
-return data ? data : [];
-}catch(e){
-return [];
+let data = JSON.parse(localStorage.getItem(key));
+return data ? data : null;
 }
+catch(e){
+return null;
 }
 
-/* XSS SAFE */
+}
+
+/* SAFE TEXT (future use) */
 
 function safe(text){
 if(!text) return "";
@@ -217,164 +223,43 @@ return text.toString()
 .replace(/>/g,"&gt;");
 }
 
-let questions=[];
-let expertRatings={};
+/* NAVIGATION */
 
-/* INIT */
+function goRegister(){
+window.location.href="register.html";
+}
 
-function initDashboard(){
+function goLogin(){
+window.location.href="login.html";
+}
 
-let user=getData("loggedInUser");
+/* ASK BUTTON SECURITY */
+
+function goToAsk(){
+
+let user = getData("loggedInUser");
 
 if(!user){
+
 alert("Please login first");
+
 window.location.href="login.html";
+
 return;
+
 }
 
 if(user.banned){
+
 alert("Your account is banned");
-window.location.href="login.html";
-return;
-}
-
-questions=getData("questions");
-expertRatings=getData("expertRatings") || {};
-
-loadQuestions();
-
-}
-
-/* LOGOUT */
-
-function logout(){
-
-localStorage.removeItem("loggedInUser");
-
-alert("Logged out successfully");
 
 window.location.href="login.html";
 
-}
-
-/* LOAD QUESTIONS */
-
-function loadQuestions(filter="All"){
-
-let container=document.getElementById("questionsContainer");
-
-container.innerHTML="";
-
-let filtered=questions.filter(q=>{
-return filter==="All" || q.profession===filter;
-});
-
-if(filtered.length===0){
-container.innerHTML="<p style='text-align:center'>No questions available.</p>";
 return;
-}
-
-filtered.forEach(q=>{
-
-let avgRating="Not rated";
-
-if(expertRatings[q.profession] && expertRatings[q.profession].count>0){
-
-let r=expertRatings[q.profession];
-
-avgRating=(r.total/r.count).toFixed(1);
 
 }
 
-let div=document.createElement("div");
-
-div.className="question-card";
-
-div.innerHTML=`
-
-<p><b>Question:</b> ${safe(q.question)}</p>
-
-<p><b>Expert Required:</b> ${safe(q.profession)}</p>
-
-<p class="timestamp">Asked on: ${safe(q.timestamp)}</p>
-
-<div class="answer-box"><b>Answer:</b> ${safe(q.answer || "No answer yet")}</div>
-
-<textarea id="answer-${q.id}" placeholder="Write your answer...">${safe(q.answer || "")}</textarea>
-
-<button onclick="submitAnswer(${q.id})">Submit Answer</button>
-
-<div class="rating">
-
-<p><b>Rate this expert:</b> ⭐ ${avgRating}</p>
-
-<button onclick="rateExpert('${q.profession}',5)">⭐5</button>
-<button onclick="rateExpert('${q.profession}',4)">⭐4</button>
-<button onclick="rateExpert('${q.profession}',3)">⭐3</button>
-<button onclick="rateExpert('${q.profession}',2)">⭐2</button>
-<button onclick="rateExpert('${q.profession}',1)">⭐1</button>
-
-</div>
-
-`;
-
-container.appendChild(div);
-
-});
-
-}
-
-/* SUBMIT ANSWER */
-
-function submitAnswer(id){
-
-let text=document.getElementById("answer-"+id).value.trim();
-
-if(text===""){
-alert("Please write an answer first");
-return;
-}
-
-let index=questions.findIndex(q=>q.id===id);
-
-if(index===-1) return;
-
-questions[index].answer=text;
-
-localStorage.setItem("questions",JSON.stringify(questions));
-
-alert("Answer submitted successfully");
-
-loadQuestions(document.getElementById("professionFilter").value);
-
-}
-
-/* RATE EXPERT */
-
-function rateExpert(expert,stars){
-
-if(!expertRatings[expert]){
-expertRatings[expert]={total:0,count:0};
-}
-
-expertRatings[expert].total+=stars;
-expertRatings[expert].count+=1;
-
-localStorage.setItem("expertRatings",JSON.stringify(expertRatings));
-
-let avg=(expertRatings[expert].total/expertRatings[expert].count).toFixed(1);
-
-alert("Thanks! "+expert+" rating: ⭐ "+avg);
-
-}
-
-/* FILTER */
-
-function filterQuestions(){
-
-let filter=document.getElementById("professionFilter").value;
-
-loadQuestions(filter);
+window.location.href="ask.html";
 
 }
 
