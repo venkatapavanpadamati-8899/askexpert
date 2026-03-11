@@ -1,74 +1,75 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Ask Question - AskExpert</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
 
+*{box-sizing:border-box;}
+
 body{
 margin:0;
-font-family:Arial;
+font-family:Segoe UI,Arial;
 background:linear-gradient(135deg,#667eea,#764ba2);
-height:100vh;
+min-height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
+padding:30px;
 }
 
 .ask-box{
 background:white;
 padding:40px;
-width:450px;
-border-radius:15px;
-box-shadow:0 15px 35px rgba(0,0,0,0.2);
-animation:fadeIn 1s;
+width:480px;
+border-radius:18px;
+box-shadow:0 20px 50px rgba(0,0,0,.25);
+animation:fadeIn .7s;
 }
 
-h2{
-text-align:center;
-margin-bottom:20px;
+h2{text-align:center;margin-bottom:20px;}
+
+textarea,select,input{
+width:100%;
+padding:12px;
+border-radius:8px;
+border:1px solid #ccc;
+margin-bottom:15px;
+font-size:14px;
 }
 
 textarea{
-width:100%;
 height:120px;
-padding:10px;
-border-radius:8px;
-border:1px solid #ccc;
-margin-bottom:15px;
 resize:none;
-}
-
-select{
-width:100%;
-padding:10px;
-border-radius:8px;
-border:1px solid #ccc;
-margin-bottom:15px;
 }
 
 button{
 width:100%;
 padding:12px;
-background:#28a745;
 border:none;
-color:white;
-font-size:16px;
 border-radius:8px;
+font-size:15px;
 cursor:pointer;
 margin-top:10px;
 }
 
-button:hover{
-background:#218838;
-}
+.voice-btn{background:#ff5722;color:white;}
+.ai-btn{background:#8e24aa;color:white;}
+.submit-btn{background:#28a745;color:white;}
 
-.ai-btn{
-background:#007bff;
-}
+button:hover{opacity:.9;}
 
-.ai-btn:hover{
-background:#0069d9;
+#errorMsg{
+text-align:center;
+margin-bottom:12px;
+font-weight:bold;
 }
 
 .home-link{
@@ -77,90 +78,216 @@ margin-top:15px;
 }
 
 @keyframes fadeIn{
-from{
-opacity:0;
-transform:translateY(-30px);
-}
-to{
-opacity:1;
-transform:translateY(0);
-}
+from{opacity:0;transform:translateY(-20px);}
+to{opacity:1;transform:translateY(0);}
 }
 
 </style>
 
 <script>
 
-/* AI expert detection */
+/* -------------------------
+SAFE JSON FUNCTION
+------------------------- */
 
-function detectExpert(){
+function getData(key){
+try{
+let data = JSON.parse(localStorage.getItem(key));
+return data ? data : null;
+}catch(e){
+return null;
+}
+}
 
-let question = document.getElementById("question").value.toLowerCase();
+/* -------------------------
+XSS SECURITY
+------------------------- */
 
-if(question.trim()==""){
-alert("Please write your problem first.");
+function safe(text){
+if(!text) return "";
+return text.toString()
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;");
+}
+
+/* -------------------------
+LOGIN CHECK
+------------------------- */
+
+let user = getData("loggedInUser");
+
+if(!user){
+alert("Please login first");
+window.location.href="login.html";
+}
+
+if(user && user.banned){
+alert("Your account is banned");
+window.location.href="login.html";
+}
+
+/* -------------------------
+SPAM DETECTION
+------------------------- */
+
+function detectSpam(text){
+
+text=text.toLowerCase();
+
+if(text.includes("test") || text.includes("asdf")) return true;
+
+if(/(.)\1{5,}/.test(text)) return true;
+
+return false;
+
+}
+
+/* -------------------------
+SUBMIT QUESTION
+------------------------- */
+
+function submitQuestion(){
+
+let question=document.getElementById("question").value.trim();
+let profession=document.getElementById("professionSelect").value;
+let notes=document.getElementById("notes").value.trim();
+let language=document.getElementById("language").value;
+
+let error=document.getElementById("errorMsg");
+
+if(question===""){
+error.innerText="Please write your question";
+error.style.color="red";
 return;
 }
 
-let expert = document.getElementById("expert");
-
-if(question.includes("pain") || question.includes("fever") || question.includes("medicine")){
-expert.value = "Doctor";
-alert("AI Suggestion: You should ask a Doctor");
+if(question.length < 10){
+error.innerText="Question must be at least 10 characters";
+error.style.color="red";
+return;
 }
 
-else if(question.includes("court") || question.includes("case") || question.includes("law")){
-expert.value = "Lawyer";
-alert("AI Suggestion: You should ask a Lawyer");
+if(detectSpam(question)){
+error.innerText="Spam or low quality question detected";
+error.style.color="red";
+return;
 }
 
-else if(question.includes("study") || question.includes("exam") || question.includes("homework")){
-expert.value = "Teacher";
-alert("AI Suggestion: You should ask a Teacher");
+if(profession===""){
+error.innerText="Please select expert";
+error.style.color="red";
+return;
 }
 
-else if(question.includes("software") || question.includes("coding") || question.includes("app")){
-expert.value = "Engineer";
-alert("AI Suggestion: You should ask an Engineer");
-}
+let questions = getData("questions") || [];
 
-else{
-alert("AI could not identify. Please select expert manually.");
-}
+let newQuestion={
 
-}
+id:Date.now(),
 
+question:safe(question),
 
-/* Save question */
+profession:profession,
 
-function saveQuestion(){
+notes:safe(notes),
 
-let question = document.getElementById("question").value;
-let expert = document.getElementById("expert").value;
-let type = document.getElementById("type").value;
+askedBy:safe(user.name),
 
-if(question=="" || expert==""){
-alert("Please fill all fields.");
-return false;
-}
+language:language,
 
-let data = {
-question: question,
-expert: expert,
-type: type
+timestamp:new Date().toLocaleString(),
+
+answer:"",
+
+status:"pending",
+
+views:0
+
 };
 
-let questions = JSON.parse(localStorage.getItem("questions")) || [];
+questions.push(newQuestion);
 
-questions.push(data);
+localStorage.setItem("questions",JSON.stringify(questions));
 
-localStorage.setItem("questions", JSON.stringify(questions));
+error.style.color="green";
+error.innerText="Question submitted successfully!";
 
-alert("Question submitted successfully!");
+document.getElementById("question").value="";
+document.getElementById("notes").value="";
+document.getElementById("professionSelect").value="";
 
-window.location.href="questions.html";
+}
 
-return false;
+/* -------------------------
+AI EXPERT DETECTION
+------------------------- */
+
+function identifyExpert(){
+
+let text=document.getElementById("question").value.toLowerCase();
+
+let profession="";
+
+if(text.includes("fever") || text.includes("medicine") || text.includes("pain"))
+profession="doctor";
+
+else if(text.includes("court") || text.includes("law") || text.includes("case"))
+profession="lawyer";
+
+else if(text.includes("software") || text.includes("computer") || text.includes("coding") || text.includes("app"))
+profession="engineer";
+
+else if(text.includes("exam") || text.includes("study") || text.includes("homework"))
+profession="teacher";
+
+else if(text.includes("crime") || text.includes("complaint"))
+profession="police";
+
+document.getElementById("professionSelect").value=profession;
+
+let error=document.getElementById("errorMsg");
+
+if(profession===""){
+error.innerText="AI could not detect expert";
+error.style.color="orange";
+}
+else{
+error.innerText="AI Suggests: "+profession;
+error.style.color="blue";
+}
+
+}
+
+/* -------------------------
+VOICE INPUT
+------------------------- */
+
+function startVoice(){
+
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+if(!SpeechRecognition){
+alert("Voice recognition not supported");
+return;
+}
+
+const recognition=new SpeechRecognition();
+
+recognition.lang="en-US";
+
+recognition.start();
+
+recognition.onresult=function(event){
+
+let voiceText=event.results[0][0].transcript;
+
+document.getElementById("question").value=voiceText;
+
+};
+
+recognition.onend=function(){
+console.log("Voice input finished");
+};
 
 }
 
@@ -174,30 +301,48 @@ return false;
 
 <h2>Ask Your Question</h2>
 
-<form onsubmit="return saveQuestion()">
+<p id="errorMsg"></p>
 
-<textarea id="question" placeholder="Describe your problem here..." required></textarea>
+<label>Select Language</label>
 
-<button type="button" class="ai-btn" onclick="detectExpert()">AI Identify Expert</button>
-
-<select id="expert">
-<option value="">Select Professional</option>
-<option value="Lawyer">Lawyer</option>
-<option value="Doctor">Doctor</option>
-<option value="Teacher">Teacher</option>
-<option value="Engineer">Engineer</option>
-<option value="Police">Police</option>
+<select id="language">
+<option value="English">English</option>
+<option value="Telugu">Telugu</option>
 </select>
 
-<select id="type">
-<option value="">Question Type</option>
-<option value="Public">Public Question</option>
-<option value="Private">Private Question</option>
+<label>Describe your problem</label>
+
+<textarea id="question" placeholder="Explain your problem..."></textarea>
+
+<button class="voice-btn" onclick="startVoice()">🎤 Speak Question</button>
+
+<button class="ai-btn" onclick="identifyExpert()">🤖 AI Identify Expert</button>
+
+<label>Select Professional</label>
+
+<select id="professionSelect">
+
+<option value="">Select Profession</option>
+<option value="doctor">Doctor</option>
+<option value="lawyer">Lawyer</option>
+<option value="engineer">Engineer</option>
+<option value="teacher">Teacher</option>
+<option value="police">Police</option>
+<option value="business">Business Expert</option>
+<option value="finance">Financial Expert</option>
+<option value="marketing">Marketing Expert</option>
+<option value="startup">Startup Mentor</option>
+<option value="it">IT Support</option>
+<option value="psychologist">Psychologist</option>
+<option value="career">Career Advisor</option>
+
 </select>
 
-<button type="submit">Submit Question</button>
+<label>Optional Notes</label>
 
-</form>
+<input type="text" id="notes" placeholder="Extra information">
+
+<button class="submit-btn" onclick="submitQuestion()">Submit Question</button>
 
 <div class="home-link">
 <a href="index.html">Back to Home</a>
