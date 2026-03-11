@@ -1,71 +1,171 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AskExpert Professional Dashboard</title>
 
-<title>Expert Dashboard</title>
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
 
-body{
-font-family:Arial;
+*{
 margin:0;
-background:#f4f4f4;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI, Arial;
+}
+
+body{
+min-height:100vh;
+background:
+linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.7)),
+url("https://images.unsplash.com/photo-1553877522-43269d4ea984");
+background-size:cover;
+background-position:center;
 padding:30px;
 }
 
-h1{
-text-align:center;
+.container{
+max-width:950px;
+margin:auto;
+background:rgba(255,255,255,0.95);
+padding:40px;
+border-radius:18px;
+box-shadow:0 20px 40px rgba(0,0,0,0.3);
 }
 
-.filter{
+.header{
 text-align:center;
-margin-bottom:20px;
+margin-bottom:25px;
+}
+
+.header img{
+width:70px;
+margin-bottom:10px;
+}
+
+h1{color:#333;}
+
+.icons{
+text-align:center;
+font-size:28px;
+margin-top:10px;
+margin-bottom:15px;
+}
+
+.icons i{
+margin:0 10px;
+color:#4c6ef5;
+}
+
+.chat-link,.logout-btn{
+display:inline-block;
+margin-top:10px;
+padding:10px 20px;
+border-radius:6px;
+font-weight:bold;
+text-decoration:none;
+color:white;
+}
+
+.chat-link{background:#4c6ef5;}
+.chat-link:hover{background:#364fc7;}
+
+.logout-btn{background:#f44336;}
+.logout-btn:hover{background:#c62828;}
+
+.filter{
+margin:25px 0;
+text-align:center;
 }
 
 select{
 padding:10px;
-border-radius:5px;
+border-radius:8px;
+border:1px solid #ccc;
+font-size:15px;
 }
 
 .question-card{
 background:white;
-padding:20px;
-margin:15px auto;
-max-width:600px;
-border-radius:10px;
-box-shadow:0 5px 15px rgba(0,0,0,0.1);
+padding:22px;
+margin:18px 0;
+border-radius:12px;
+box-shadow:0 8px 18px rgba(0,0,0,0.15);
 }
 
 textarea{
 width:100%;
-height:80px;
+height:90px;
 margin-top:10px;
 padding:10px;
-border-radius:5px;
+border-radius:6px;
 border:1px solid #ccc;
+resize:none;
 }
 
 button{
 margin-top:10px;
 padding:10px 15px;
-background:#007bff;
+background:#2ecc71;
 border:none;
 color:white;
-border-radius:5px;
+border-radius:6px;
 cursor:pointer;
+font-weight:bold;
 }
 
-button:hover{
-background:#0056b3;
+button:hover{background:#27ae60;}
+
+.rating{
+margin-top:12px;
+}
+
+.rating button{
+background:#ffc107;
+color:black;
+margin:3px;
+}
+
+.timestamp{
+font-size:12px;
+color:gray;
+margin-top:5px;
+}
+
+.answer-box{
+background:#f4f6ff;
+padding:10px;
+border-radius:6px;
+margin-top:10px;
 }
 
 </style>
-
 </head>
 
-<body>
+<body onload="initDashboard()">
 
-<h1>Expert Dashboard</h1>
+<div class="container">
+
+<div class="header">
+
+<img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
+
+<h1>AskExpert Professional Dashboard</h1>
+
+<div class="icons">
+<i class="fa-solid fa-user-doctor"></i>
+<i class="fa-solid fa-scale-balanced"></i>
+<i class="fa-solid fa-laptop-code"></i>
+<i class="fa-solid fa-graduation-cap"></i>
+</div>
+
+<a href="chat.html" class="chat-link">💬 Open Chat</a>
+<a href="#" class="logout-btn" onclick="logout()">Logout</a>
+
+</div>
 
 <div class="filter">
 
@@ -74,11 +174,18 @@ background:#0056b3;
 <select id="professionFilter" onchange="filterQuestions()">
 
 <option value="All">All</option>
-<option value="Lawyer">Lawyer</option>
-<option value="Doctor">Doctor</option>
-<option value="Teacher">Teacher</option>
-<option value="Engineer">Engineer</option>
-<option value="Police">Police</option>
+<option value="lawyer">Lawyer</option>
+<option value="doctor">Doctor</option>
+<option value="engineer">Engineer</option>
+<option value="teacher">Teacher</option>
+<option value="police">Police</option>
+<option value="business">Business Expert</option>
+<option value="finance">Financial Expert</option>
+<option value="marketing">Marketing Expert</option>
+<option value="startup">Startup Mentor</option>
+<option value="it">IT Support</option>
+<option value="psychologist">Psychologist</option>
+<option value="career">Career Advisor</option>
 
 </select>
 
@@ -86,61 +193,190 @@ background:#0056b3;
 
 <div id="questionsContainer"></div>
 
+</div>
+
 <script>
 
-let questions = JSON.parse(localStorage.getItem("questions")) || [];
+/* SAFE JSON */
+
+function getData(key){
+try{
+let data=JSON.parse(localStorage.getItem(key));
+return data ? data : [];
+}catch(e){
+return [];
+}
+}
+
+/* XSS SAFE */
+
+function safe(text){
+if(!text) return "";
+return text.toString()
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;");
+}
+
+let questions=[];
+let expertRatings={};
+
+/* INIT */
+
+function initDashboard(){
+
+let user=getData("loggedInUser");
+
+if(!user){
+alert("Please login first");
+window.location.href="login.html";
+return;
+}
+
+if(user.banned){
+alert("Your account is banned");
+window.location.href="login.html";
+return;
+}
+
+questions=getData("questions");
+expertRatings=getData("expertRatings") || {};
+
+loadQuestions();
+
+}
+
+/* LOGOUT */
+
+function logout(){
+
+localStorage.removeItem("loggedInUser");
+
+alert("Logged out successfully");
+
+window.location.href="login.html";
+
+}
+
+/* LOAD QUESTIONS */
 
 function loadQuestions(filter="All"){
 
-let container = document.getElementById("questionsContainer");
+let container=document.getElementById("questionsContainer");
 
 container.innerHTML="";
 
-questions.forEach(function(q,index){
+let filtered=questions.filter(q=>{
+return filter==="All" || q.profession===filter;
+});
 
-if(filter==="All" || q.expert===filter){
+if(filtered.length===0){
+container.innerHTML="<p style='text-align:center'>No questions available.</p>";
+return;
+}
 
-let div = document.createElement("div");
+filtered.forEach(q=>{
+
+let avgRating="Not rated";
+
+if(expertRatings[q.profession] && expertRatings[q.profession].count>0){
+
+let r=expertRatings[q.profession];
+
+avgRating=(r.total/r.count).toFixed(1);
+
+}
+
+let div=document.createElement("div");
 
 div.className="question-card";
 
 div.innerHTML=`
 
-<p><b>Question:</b> ${q.question}</p>
+<p><b>Question:</b> ${safe(q.question)}</p>
 
-<p><b>Expert Required:</b> ${q.expert}</p>
+<p><b>Expert Required:</b> ${safe(q.profession)}</p>
 
-<textarea placeholder="Write your answer"></textarea>
+<p class="timestamp">Asked on: ${safe(q.timestamp)}</p>
 
-<button onclick="submitAnswer()">Submit Answer</button>
+<div class="answer-box"><b>Answer:</b> ${safe(q.answer || "No answer yet")}</div>
 
-<hr>
+<textarea id="answer-${q.id}" placeholder="Write your answer...">${safe(q.answer || "")}</textarea>
+
+<button onclick="submitAnswer(${q.id})">Submit Answer</button>
+
+<div class="rating">
+
+<p><b>Rate this expert:</b> ⭐ ${avgRating}</p>
+
+<button onclick="rateExpert('${q.profession}',5)">⭐5</button>
+<button onclick="rateExpert('${q.profession}',4)">⭐4</button>
+<button onclick="rateExpert('${q.profession}',3)">⭐3</button>
+<button onclick="rateExpert('${q.profession}',2)">⭐2</button>
+<button onclick="rateExpert('${q.profession}',1)">⭐1</button>
+
+</div>
 
 `;
 
 container.appendChild(div);
 
-}
-
 });
 
 }
 
+/* SUBMIT ANSWER */
+
+function submitAnswer(id){
+
+let text=document.getElementById("answer-"+id).value.trim();
+
+if(text===""){
+alert("Please write an answer first");
+return;
+}
+
+let index=questions.findIndex(q=>q.id===id);
+
+if(index===-1) return;
+
+questions[index].answer=text;
+
+localStorage.setItem("questions",JSON.stringify(questions));
+
+alert("Answer submitted successfully");
+
+loadQuestions(document.getElementById("professionFilter").value);
+
+}
+
+/* RATE EXPERT */
+
+function rateExpert(expert,stars){
+
+if(!expertRatings[expert]){
+expertRatings[expert]={total:0,count:0};
+}
+
+expertRatings[expert].total+=stars;
+expertRatings[expert].count+=1;
+
+localStorage.setItem("expertRatings",JSON.stringify(expertRatings));
+
+let avg=(expertRatings[expert].total/expertRatings[expert].count).toFixed(1);
+
+alert("Thanks! "+expert+" rating: ⭐ "+avg);
+
+}
+
+/* FILTER */
+
 function filterQuestions(){
 
-let selected = document.getElementById("professionFilter").value;
+let filter=document.getElementById("professionFilter").value;
 
-loadQuestions(selected);
-
-}
-
-function submitAnswer(){
-
-alert("Answer submitted successfully!");
+loadQuestions(filter);
 
 }
-
-loadQuestions();
 
 </script>
 
