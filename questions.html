@@ -1,95 +1,345 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Questions - AskExpert</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Questions - AskExpert</title>
 
 <style>
 
-body{
-font-family:Arial;
+*{
 margin:0;
-background:#f4f4f4;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',Arial;
+}
+
+/* BACKGROUND */
+
+body{
+min-height:100vh;
+
+background:
+linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.7)),
+url("https://images.unsplash.com/photo-1521791136064-7986c2920216");
+
+background-size:cover;
+background-position:center;
+
 padding:40px;
 }
 
-h2{
-text-align:center;
+/* CONTAINER */
+
+.container{
+max-width:900px;
+margin:auto;
+
+background:rgba(255,255,255,0.95);
+
+padding:35px;
+
+border-radius:18px;
+
+box-shadow:0 20px 40px rgba(0,0,0,0.3);
 }
+
+/* HEADER */
+
+.header{
+text-align:center;
+margin-bottom:25px;
+}
+
+.header img{
+width:70px;
+margin-bottom:10px;
+}
+
+h2{
+margin-bottom:10px;
+}
+
+/* CHAT BUTTON */
+
+.chat-link{
+display:inline-block;
+padding:10px 20px;
+background:#4c6ef5;
+color:white;
+text-decoration:none;
+border-radius:6px;
+font-weight:bold;
+}
+
+.chat-link:hover{
+background:#364fc7;
+}
+
+/* QUESTION CARD */
 
 .question-box{
 background:white;
 padding:20px;
-margin:20px auto;
-max-width:600px;
-border-radius:10px;
-box-shadow:0 5px 15px rgba(0,0,0,0.1);
+margin:20px 0;
+border-radius:12px;
+box-shadow:0 10px 20px rgba(0,0,0,0.15);
 }
+
+/* ANSWER */
+
+.answer{
+margin-top:10px;
+padding:10px;
+background:#f4f6ff;
+border-radius:6px;
+}
+
+/* TEXTAREA */
 
 textarea{
 width:100%;
-height:80px;
+height:90px;
 margin-top:10px;
 padding:10px;
-border-radius:5px;
+border-radius:6px;
 border:1px solid #ccc;
+resize:none;
 }
+
+/* BUTTON */
 
 button{
 margin-top:10px;
 padding:10px 15px;
-background:#28a745;
+background:#2ecc71;
 border:none;
 color:white;
-border-radius:5px;
+border-radius:6px;
 cursor:pointer;
+font-weight:bold;
 }
 
 button:hover{
-background:#218838;
+background:#27ae60;
+}
+
+/* RATING */
+
+.rating{
+margin-top:10px;
+}
+
+.rating button{
+background:#ffc107;
+color:black;
+margin:3px;
+}
+
+/* TIMESTAMP */
+
+.timestamp{
+font-size:12px;
+color:gray;
+margin-top:5px;
 }
 
 </style>
-
 </head>
 
 <body>
 
+<div class="container">
+
+<div class="header">
+
+<img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
+
 <h2>User Questions</h2>
+
+<a href="chat.html" class="chat-link">💬 Open Chat</a>
+
+</div>
 
 <div id="questionsList"></div>
 
+</div>
+
 <script>
 
-let questions = JSON.parse(localStorage.getItem("questions")) || [];
+/* SAFE JSON */
+
+function getData(key){
+try{
+let data = JSON.parse(localStorage.getItem(key));
+return data;
+}catch(e){
+return null;
+}
+}
+
+/* SAFE ARRAY */
+
+function getArray(key){
+let data = getData(key);
+return Array.isArray(data) ? data : [];
+}
+
+/* SAFE OBJECT */
+
+function getObject(key){
+let data = getData(key);
+return (data && typeof data==="object") ? data : {};
+}
+
+/* XSS SAFE */
+
+function safe(text){
+if(!text) return "";
+return text.toString()
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#39;");
+}
+
+/* LOGIN CHECK */
+
+let user = getData("loggedInUser");
+
+if(!user){
+alert("Please login first");
+window.location.href="login.html";
+}
+
+if(user && user.banned){
+alert("Your account is banned");
+window.location.href="login.html";
+}
+
+/* LOAD QUESTIONS */
+
+function loadQuestions(){
+
+let questions = getArray("questions");
 
 let container = document.getElementById("questionsList");
 
-questions.forEach(function(q,index){
+container.innerHTML="";
 
-let div = document.createElement("div");
+if(questions.length===0){
+
+container.innerHTML="<p style='text-align:center'>No questions yet.</p>";
+
+return;
+
+}
+
+questions.forEach(q=>{
+
+let div=document.createElement("div");
 
 div.className="question-box";
 
-div.innerHTML = `
-<p><b>Question:</b> ${q.question}</p>
-<p><b>Expert Needed:</b> ${q.expert}</p>
+let questionText = safe(q.question);
+let profession = safe(q.profession);
+let notes = safe(q.notes);
+let timestamp = safe(q.timestamp || "N/A");
+let answer = safe(q.answer || "No answer yet");
 
-<textarea placeholder="Write your answer"></textarea>
+div.innerHTML=`
 
-<button onclick="submitAnswer(${index})">Submit Answer</button>
+<p><b>Question:</b> ${questionText}</p>
 
-<hr>
+<p><b>Expert Needed:</b> ${profession}</p>
+
+${q.notes ? `<p><b>Notes:</b> ${notes}</p>` : ""}
+
+<p class="timestamp"><b>Asked on:</b> ${timestamp}</p>
+
+<div class="answer"><b>Answer:</b> ${answer}</div>
+
+<textarea id="answer_${q.id}" placeholder="Write your answer..."></textarea>
+
+<button onclick="submitAnswer(${Number(q.id)})">Submit Answer</button>
+
+<div class="rating">
+
+<p><b>Rate this expert:</b></p>
+
+<button onclick="rateExpert('${profession}',5)">⭐5</button>
+<button onclick="rateExpert('${profession}',4)">⭐4</button>
+<button onclick="rateExpert('${profession}',3)">⭐3</button>
+<button onclick="rateExpert('${profession}',2)">⭐2</button>
+<button onclick="rateExpert('${profession}',1)">⭐1</button>
+
+</div>
+
 `;
 
 container.appendChild(div);
 
 });
 
-function submitAnswer(index){
+}
+
+/* SUBMIT ANSWER */
+
+function submitAnswer(id){
+
+let questions=getArray("questions");
+
+let text=document.getElementById("answer_"+id).value.trim();
+
+if(text===""){
+alert("Please write an answer first");
+return;
+}
+
+let index=questions.findIndex(q=>Number(q.id)===Number(id));
+
+if(index===-1){
+alert("Question not found");
+return;
+}
+
+questions[index].answer=text;
+
+localStorage.setItem("questions",JSON.stringify(questions));
 
 alert("Answer submitted successfully!");
 
+loadQuestions();
+
 }
+
+/* RATE EXPERT */
+
+function rateExpert(expert,stars){
+
+let ratings=getObject("expertRatings");
+
+if(!ratings[expert]){
+ratings[expert]={total:0,count:0};
+}
+
+ratings[expert].total += stars;
+ratings[expert].count += 1;
+
+localStorage.setItem("expertRatings",JSON.stringify(ratings));
+
+let avg = ratings[expert].count
+? (ratings[expert].total/ratings[expert].count).toFixed(1)
+: "0";
+
+alert("Thanks! "+expert+" rating: ⭐ "+avg);
+
+}
+
+/* INIT */
+
+loadQuestions();
 
 </script>
 
