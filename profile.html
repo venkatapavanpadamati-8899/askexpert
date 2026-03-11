@@ -1,108 +1,373 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Expert Profile - AskExpert</title>
 
 <style>
 
-body{
+*{
 margin:0;
-font-family:Arial;
-background:linear-gradient(135deg,#667eea,#764ba2);
-height:100vh;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI, Arial;
+}
+
+/* BACKGROUND */
+
+body{
+min-height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
+
+background:
+linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.7)),
+url("https://images.unsplash.com/photo-1553877522-43269d4ea984");
+
+background-size:cover;
+background-position:center;
 }
 
-.profile-card{
-background:white;
-padding:40px;
-width:350px;
-border-radius:15px;
-text-align:center;
-box-shadow:0 15px 35px rgba(0,0,0,0.2);
-animation:fadeIn 1s;
+/* PROFILE CARD */
+
+.profile-container{
+width:90%;
+max-width:520px;
+background:rgba(255,255,255,0.95);
+border-radius:20px;
+padding:30px;
+box-shadow:0 25px 50px rgba(0,0,0,0.35);
 }
+
+/* BANNER */
+
+.banner{
+height:120px;
+background:url("https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc");
+background-size:cover;
+background-position:center;
+border-radius:15px;
+margin-bottom:60px;
+position:relative;
+}
+
+/* PROFILE IMAGE */
 
 .profile-img{
-width:100px;
-height:100px;
+width:120px;
+height:120px;
 border-radius:50%;
-margin-bottom:15px;
+border:5px solid white;
+position:absolute;
+left:50%;
+bottom:-60px;
+transform:translateX(-50%);
+box-shadow:0 10px 20px rgba(0,0,0,0.3);
 }
+
+/* NAME */
 
 h2{
-margin:10px 0;
+text-align:center;
+margin-top:70px;
+color:#333;
 }
 
+/* PROFESSION */
+
 .profession{
+text-align:center;
 color:#777;
 margin-bottom:10px;
 }
 
+/* RATING */
+
 .rating{
-color:gold;
-font-size:20px;
-margin-bottom:10px;
+text-align:center;
+font-size:22px;
+color:#f1c40f;
+margin-bottom:15px;
 }
 
-.price{
-font-size:18px;
-margin-bottom:20px;
+/* INFO */
+
+.info{
+display:flex;
+justify-content:space-between;
+margin-bottom:10px;
+gap:10px;
 }
+
+.info-box{
+flex:1;
+background:#f4f6ff;
+padding:10px;
+border-radius:10px;
+font-size:14px;
+text-align:center;
+}
+
+/* TABS */
+
+.tabs{
+display:flex;
+justify-content:space-around;
+margin-top:20px;
+border-bottom:2px solid #eee;
+}
+
+.tab{
+padding:10px;
+cursor:pointer;
+font-weight:bold;
+color:#555;
+}
+
+.tab.active{
+color:#4c6ef5;
+border-bottom:3px solid #4c6ef5;
+}
+
+/* TAB CONTENT */
+
+.tab-content{
+display:none;
+margin-top:15px;
+max-height:300px;
+overflow-y:auto;
+}
+
+.tab-content.active{
+display:block;
+}
+
+/* QUESTION CARD */
+
+.question-card{
+background:white;
+padding:12px;
+border-radius:8px;
+margin-bottom:10px;
+box-shadow:0 5px 12px rgba(0,0,0,0.15);
+}
+
+/* BUTTON */
 
 button{
-padding:12px 20px;
+display:block;
+margin:20px auto 0 auto;
+padding:12px 28px;
+background:#4c6ef5;
 border:none;
-background:#28a745;
 color:white;
 font-size:16px;
-border-radius:8px;
+border-radius:10px;
 cursor:pointer;
 }
 
 button:hover{
-background:#218838;
+background:#364fc7;
 }
 
-@keyframes fadeIn{
-from{
-opacity:0;
-transform:translateY(-30px);
-}
-to{
-opacity:1;
-transform:translateY(0);
-}
+/* BACK */
+
+.back{
+display:block;
+text-align:center;
+margin-top:15px;
+color:#4c6ef5;
+text-decoration:none;
+font-weight:bold;
 }
 
 </style>
-
 </head>
 
 <body>
 
-<div class="profile-card">
+<div class="profile-container">
 
-<img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="profile-img">
+<div class="banner">
 
-<h2>John Smith</h2>
-
-<p class="profession">Criminal Lawyer</p>
-
-<p>Experience: 10 Years</p>
-
-<div class="rating">
-⭐⭐⭐⭐⭐
-</div>
-
-<p class="price">Consultation Fee: ₹500</p>
-
-<button>Contact Expert</button>
+<img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+class="profile-img"
+id="profileImg">
 
 </div>
+
+<h2 id="profileName"></h2>
+
+<p class="profession" id="profileProfession"></p>
+
+<div class="rating" id="profileRating"></div>
+
+<div class="info">
+
+<div class="info-box" id="profileExperience"></div>
+
+<div class="info-box" id="profileFee"></div>
+
+</div>
+
+<!-- TABS -->
+
+<div class="tabs">
+
+<div class="tab active" data-tab="profile">Profile</div>
+
+<div class="tab" data-tab="questions">Questions</div>
+
+<div class="tab" data-tab="answers">Answers</div>
+
+</div>
+
+<div class="tab-content active" id="profileTab">
+
+<p style="text-align:center;color:#555;">
+Welcome to your expert profile dashboard.
+</p>
+
+</div>
+
+<div class="tab-content" id="questionsTab">
+
+<div id="questionsContainer"></div>
+
+</div>
+
+<div class="tab-content" id="answersTab">
+
+<div id="answersContainer"></div>
+
+</div>
+
+<button onclick="location.href='chat.html'">Contact Expert</button>
+
+<a href="index.html" class="back">⬅ Back to Home</a>
+
+</div>
+
+<script>
+
+/* SAFE JSON */
+
+function getData(key){
+try{
+return JSON.parse(localStorage.getItem(key));
+}catch(e){
+return null;
+}
+}
+
+/* SAFE ARRAY */
+
+function getArray(key){
+let data=getData(key);
+return Array.isArray(data) ? data : [];
+}
+
+/* XSS SAFE */
+
+function safe(text){
+if(!text) return "";
+return text.toString()
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;");
+}
+
+/* LOGIN CHECK */
+
+let user=getData("loggedInUser");
+
+if(!user){
+alert("Please login first");
+window.location.href="login.html";
+}
+
+if(user && user.banned){
+alert("Your account is banned");
+window.location.href="login.html";
+}
+
+/* LOAD PROFILE */
+
+function loadProfile(){
+
+let profile=user || {};
+
+document.getElementById("profileName").innerText=safe(profile.name || "Expert");
+
+document.getElementById("profileProfession").innerText=safe(profile.profession || "Professional");
+
+document.getElementById("profileExperience").innerText="💼 "+safe(profile.experience || "5 Years")+" Experience";
+
+document.getElementById("profileFee").innerText="💰 "+safe(profile.fee || "₹300")+" Fee";
+
+let rating=parseInt(profile.rating) || 5;
+
+document.getElementById("profileRating").innerText="⭐".repeat(rating);
+
+/* LOAD QUESTIONS */
+
+let questions=getArray("questions");
+
+let qContainer=document.getElementById("questionsContainer");
+
+let aContainer=document.getElementById("answersContainer");
+
+qContainer.innerHTML="";
+aContainer.innerHTML="";
+
+questions.forEach(q=>{
+
+if(profile.profession && q.profession && q.profession!==profile.profession) return;
+
+let qDiv=document.createElement("div");
+qDiv.className="question-card";
+qDiv.innerHTML="<b>Question:</b> "+safe(q.question);
+
+qContainer.appendChild(qDiv);
+
+if(q.answer){
+
+let aDiv=document.createElement("div");
+aDiv.className="question-card";
+aDiv.innerHTML="<b>Answer:</b> "+safe(q.answer);
+
+aContainer.appendChild(aDiv);
+
+}
+
+});
+
+}
+
+/* TAB SYSTEM */
+
+document.querySelectorAll(".tab").forEach(tab=>{
+
+tab.addEventListener("click",function(){
+
+document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+document.querySelectorAll(".tab-content").forEach(c=>c.classList.remove("active"));
+
+this.classList.add("active");
+
+let tabName=this.getAttribute("data-tab");
+
+document.getElementById(tabName+"Tab").classList.add("active");
+
+});
+
+});
+
+loadProfile();
+
+</script>
 
 </body>
 </html>
