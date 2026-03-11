@@ -4,255 +4,378 @@
 <title>Register - AskExpert</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- Google Fonts & Icons -->
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-* { box-sizing: border-box; }
-body {
-    margin:0;
-    font-family: 'Roboto', Arial, sans-serif;
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    background: linear-gradient(135deg,#667eea,#764ba2);
-    background-image: url('https://images.unsplash.com/photo-1508780709619-79562169bc64?auto=format&fit=crop&w=1350&q=80');
-    background-size: cover;
-    background-position: center;
-    padding: 20px;
+
+*{box-sizing:border-box;}
+
+body{
+margin:0;
+font-family:'Roboto',Arial;
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+
+background:
+linear-gradient(135deg,#667eea,#764ba2),
+url('https://images.unsplash.com/photo-1508780709619-79562169bc64');
+
+background-size:cover;
+background-position:center;
+
+padding:20px;
 }
-.register-box {
-    background: rgba(255,255,255,0.95);
-    padding: 40px 30px;
-    border-radius: 15px;
-    width: 90%;
-    max-width: 420px;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-    position: relative;
-    text-align: center;
+
+.register-box{
+background:rgba(255,255,255,0.95);
+padding:40px 30px;
+border-radius:15px;
+width:90%;
+max-width:420px;
+box-shadow:0 15px 35px rgba(0,0,0,0.2);
+text-align:center;
 }
-.header-box {
-    background: #f0f4ff;
-    border-radius: 20px;
-    padding: 15px 30px;
-    margin-bottom: 30px;
-    display: inline-block;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+
+.header-box{
+background:#f0f4ff;
+border-radius:20px;
+padding:15px 30px;
+margin-bottom:30px;
+display:inline-block;
 }
-.app-title {
-    font-size: 32px;
-    font-weight: bold;
-    color: #5b6ee1;
-    margin-bottom: 5px;
+
+.app-title{
+font-size:32px;
+font-weight:bold;
+color:#5b6ee1;
 }
-h2 { margin: 0; color:#444; font-weight:500; }
-.input-group { position: relative; margin:15px 0; }
-.input-group i { position: absolute; top:50%; left:12px; transform: translateY(-50%); color:#666; }
-input, select { width:100%; padding:12px 12px 12px 40px; margin:10px 0; border-radius:8px; border:1px solid #ccc; font-size:15px; }
-input:focus, select:focus { outline:none; border-color:#667eea; box-shadow:0 0 5px rgba(102,126,234,0.5); }
-button {
-    width:100%; padding:14px; border:none;
-    background: linear-gradient(135deg,#667eea,#764ba2);
-    color:white; font-size:16px; border-radius:8px; cursor:pointer; margin-top:10px; transition:0.3s ease;
+
+.input-group{
+position:relative;
+margin:15px 0;
 }
-button:hover { background: linear-gradient(135deg,#764ba2,#667eea); }
-.navigation-buttons { display:flex; justify-content:space-between; margin-top:20px; gap:10px; }
-.navigation-buttons button { width:32%; padding:10px; font-size:14px; }
-.register-btn { background:#28a745; } .register-btn:hover { background:#1e7e34; }
-.login-btn { background:#007bff; } .login-btn:hover { background:#0056b3; }
-.ask-btn { background:#ff9800; } .ask-btn:hover { background:#e68900; }
-.login-link { text-align:center; margin-top:15px; }
-label { font-size:14px; color:#555; display:block; margin-top:10px; text-align:left; }
+
+.input-group i{
+position:absolute;
+left:12px;
+top:50%;
+transform:translateY(-50%);
+color:#666;
+}
+
+input,select{
+width:100%;
+padding:12px 12px 12px 40px;
+border-radius:8px;
+border:1px solid #ccc;
+font-size:15px;
+}
+
+button{
+width:100%;
+padding:14px;
+border:none;
+background:linear-gradient(135deg,#667eea,#764ba2);
+color:white;
+font-size:16px;
+border-radius:8px;
+cursor:pointer;
+margin-top:10px;
+}
+
+.navigation-buttons{
+display:flex;
+gap:10px;
+margin-top:20px;
+}
+
+.navigation-buttons button{
+width:33%;
+font-size:14px;
+}
+
+.register-btn{background:#28a745;}
+.login-btn{background:#007bff;}
+.ask-btn{background:#ff9800;}
+
 </style>
 </head>
+
 <body>
 
 <div class="register-box">
-    <div class="header-box">
-      <h1 class="app-title">💡 AskExpert</h1>
-      <h2>Create Account</h2>
-    </div>
 
-    <form onsubmit="return registerUser()">
-        <div class="input-group">
-            <i class="fa fa-user"></i>
-            <input id="name" type="text" placeholder="Full Name" required>
-        </div>
+<div class="header-box">
+<h1 class="app-title">💡 AskExpert</h1>
+<h2>Create Account</h2>
+</div>
 
-        <div class="input-group">
-            <i class="fa fa-envelope"></i>
-            <input id="email" type="email" placeholder="Email Address" required>
-        </div>
+<form onsubmit="return registerUser()">
 
-        <div class="input-group">
-            <i class="fa fa-lock"></i>
-            <input id="password" type="password" placeholder="Password" required>
-        </div>
+<div class="input-group">
+<i class="fa fa-user"></i>
+<input id="name" type="text" placeholder="Full Name" required>
+</div>
 
-        <div class="input-group">
-            <i class="fa fa-phone"></i>
-            <input id="phone" type="tel" placeholder="Mobile Number" required>
-        </div>
+<div class="input-group">
+<i class="fa fa-envelope"></i>
+<input id="email" type="email" placeholder="Email Address" required>
+</div>
 
-        <button type="button" onclick="sendOTP()"><i class="fa fa-paper-plane"></i> Send OTP</button>
+<div class="input-group">
+<i class="fa fa-lock"></i>
+<input id="password" type="password" placeholder="Password" required>
+</div>
 
-        <div class="input-group">
-            <i class="fa fa-key"></i>
-            <input type="text" id="otp" placeholder="Enter OTP">
-        </div>
-        <button type="button" onclick="verifyOTP()"><i class="fa fa-check"></i> Verify OTP</button>
+<div class="input-group">
+<i class="fa fa-phone"></i>
+<input id="phone" type="tel" placeholder="Mobile Number" required>
+</div>
 
-        <select id="accountType" required onchange="toggleProfession()">
-            <option value="">Select Account Type</option>
-            <option>User</option>
-            <option>Professional</option>
-        </select>
+<button type="button" onclick="sendOTP()">Send OTP</button>
 
-        <select id="profession" disabled>
-            <option value="">Select Profession</option>
-            <option>Lawyer</option>
-            <option>Doctor</option>
-            <option>Engineer</option>
-            <option>Teacher</option>
-            <option>Police</option>
-            <option>Arbitrator</option>
-            <option>Business Expert</option>
-            <option>Lecturer</option>
-            <option>Professor</option>
-            <option>Researcher</option>
-            <option>Financial Helper</option>
-            <option>Sales Expert</option>
-            <option>Marketing Expert</option>
-            <option>Startup Mentor</option>
-            <option>IT Support</option>
-            <option>Psychologist</option>
-            <option>Career Advisor</option>
-        </select>
+<div class="input-group">
+<i class="fa fa-key"></i>
+<input id="otp" placeholder="Enter OTP">
+</div>
 
-        <input id="course" type="text" placeholder="Course Name (Example: MBBS, LLB)" disabled>
+<button type="button" onclick="verifyOTP()">Verify OTP</button>
 
-        <label>Upload Certificate</label>
-        <input id="certificateUpload" type="file" accept=".pdf,.jpg,.png" disabled>
+<select id="accountType" onchange="toggleProfession()" required>
+<option value="">Select Account Type</option>
+<option value="user">User</option>
+<option value="expert">Professional</option>
+</select>
 
-        <label>
-            <input type="checkbox" id="talentRequest" disabled>
-            I don't have certificates but I request admin verification
-        </label>
+<select id="profession" disabled>
+<option value="">Select Profession</option>
+<option>Lawyer</option>
+<option>Doctor</option>
+<option>Engineer</option>
+<option>Teacher</option>
+<option>Police</option>
+<option>Business Expert</option>
+<option>IT Support</option>
+<option>Psychologist</option>
+<option>Career Advisor</option>
+</select>
 
-        <button type="submit"><i class="fa fa-user-plus"></i> Register</button>
-    </form>
+<input id="course" placeholder="Course (Example: MBBS)" disabled>
 
-    <!-- Navigation Buttons -->
-    <div class="navigation-buttons">
-        <button class="register-btn" onclick="location.href='register.html'">Register</button>
-        <button class="login-btn" onclick="location.href='login.html'">Login</button>
-        <button class="ask-btn" onclick="location.href='ask.html'">Ask Question</button>
-    </div>
+<label>Upload Certificate</label>
+<input id="certificateUpload" type="file" disabled>
 
-    <div class="login-link">
-        <p>Already have an account?</p>
-        <a href="login.html">Login Here</a>
-    </div>
+<label>
+<input type="checkbox" id="talentRequest" disabled>
+Request admin verification
+</label>
+
+<button type="submit">Register</button>
+
+</form>
+
+<div class="navigation-buttons">
+<button class="register-btn" onclick="location.href='register.html'">Register</button>
+<button class="login-btn" onclick="location.href='login.html'">Login</button>
+<button class="ask-btn" onclick="location.href='ask.html'">Ask</button>
+</div>
+
 </div>
 
 <script>
-let verified = false;
 
-// OTP Functions
-function sendOTP() {
-    let otp = Math.floor(100000 + Math.random() * 900000);
-    alert("Your OTP is: " + otp);
-    localStorage.setItem("otp", otp);
+/* SAFE USER LOADER */
+
+function getUsers(){
+try{
+let data = JSON.parse(localStorage.getItem("users"));
+return Array.isArray(data) ? data : [];
+}catch(e){
+return [];
+}
 }
 
-function verifyOTP() {
-    let entered = document.getElementById("otp").value;
-    let real = localStorage.getItem("otp");
-    if (!real) { alert("Please click Send OTP first!"); return; }
-    if (entered === real) { alert("OTP Verified ✅"); verified = true; }
-    else { alert("Invalid OTP ❌"); verified = false; }
+let verified=false;
+
+/* OTP */
+
+function sendOTP(){
+
+let phone=document.getElementById("phone").value.trim();
+
+if(!/^[0-9]{10}$/.test(phone)){
+alert("Enter valid 10 digit phone number");
+return;
 }
 
-// Enable/Disable Professional Fields
-function toggleProfession() {
-    let type = document.getElementById("accountType").value;
-    let profession = document.getElementById("profession");
-    let course = document.getElementById("course");
-    let certificate = document.getElementById("certificateUpload");
-    let talent = document.getElementById("talentRequest");
+let otp=Math.floor(100000+Math.random()*900000);
 
-    if (type === "Professional") {
-        profession.disabled = false;
-        course.disabled = false;
-        certificate.disabled = false;
-        talent.disabled = false;
-    } else {
-        profession.disabled = true; profession.value="";
-        course.disabled = true; course.value="";
-        certificate.disabled = true;
-        talent.disabled = true; talent.checked=false;
-    }
+localStorage.setItem("otp",otp);
+
+alert("OTP: "+otp);
+
 }
 
-// Simulated AI Certificate Verification
-function checkCertificate(){
-    let file=document.getElementById("certificateUpload").files[0];
-    if(!file) return null;
-    let name=file.name.toLowerCase();
-    if(name.includes("mbbs") || name.includes("llb") || name.includes("btech") || name.includes("degree") || name.includes("diploma")) {
-        alert("AI Verification Success: Government Verified Certificate ✅");
-        return "verified";
-    } else {
-        alert("AI cannot confirm certificate. Sending to Admin ⏳");
-        return "pending";
-    }
+function verifyOTP(){
+
+let entered=document.getElementById("otp").value;
+
+let real=localStorage.getItem("otp");
+
+if(!real){
+alert("Send OTP first");
+return;
 }
 
-// Registration Function
-function registerUser() {
-    if (!verified) { alert("Please verify OTP first!"); return false; }
-
-    let name=document.getElementById("name").value.trim();
-    let email=document.getElementById("email").value.trim();
-    let password=document.getElementById("password").value;
-    let phone=document.getElementById("phone").value.trim();
-    let type=document.getElementById("accountType").value;
-    let profession=document.getElementById("profession").value;
-    let course=document.getElementById("course").value.trim();
-    let certificateFile=document.getElementById("certificateUpload").files[0];
-    let talent=document.getElementById("talentRequest").checked;
-
-    if(type==="Professional") {
-        if(profession===""){ alert("Please select your profession"); return false; }
-        if(course===""){ alert("Please enter your course"); return false; }
-        if(!certificateFile && !talent){ alert("Please upload your certificate or request admin approval"); return false; }
-    }
-
-    // Determine status
-    let status="pending";
-    if(talent) status="admin_review";
-    else if(certificateFile) {
-        let verificationStatus = checkCertificate();
-        status = verificationStatus || "pending";
-    }
-
-    let user = {
-        name,email,password,phone,type,profession,course,
-        certificate: certificateFile? certificateFile.name : "",
-        status
-    };
-
-    let users=JSON.parse(localStorage.getItem("users")) || [];
-    users.push(user);
-    localStorage.setItem("users",JSON.stringify(users));
-
-    alert("Registration Successful! Status: " + status.toUpperCase());
-    localStorage.removeItem("otp");
-    window.location.href="login.html";
-    return false;
+if(entered===real){
+verified=true;
+localStorage.removeItem("otp");
+alert("OTP Verified");
+}else{
+verified=false;
+alert("Wrong OTP");
 }
+
+}
+
+/* PROFESSIONAL FIELDS */
+
+function toggleProfession(){
+
+let type=document.getElementById("accountType").value;
+
+let profession=document.getElementById("profession");
+let course=document.getElementById("course");
+let certificate=document.getElementById("certificateUpload");
+let talent=document.getElementById("talentRequest");
+
+let enable = type==="expert";
+
+profession.disabled=!enable;
+course.disabled=!enable;
+certificate.disabled=!enable;
+talent.disabled=!enable;
+
+if(!enable){
+profession.value="";
+course.value="";
+certificate.value="";
+talent.checked=false;
+}
+
+}
+
+/* AI CERTIFICATE CHECK */
+
+function checkCertificate(file){
+
+if(!file) return null;
+
+let name=file.name.toLowerCase();
+
+if(name.includes("mbbs") || name.includes("llb") || name.includes("btech") || name.includes("degree")){
+return "verified";
+}
+
+return "pending";
+
+}
+
+/* REGISTER USER */
+
+function registerUser(){
+
+if(!verified){
+alert("Verify OTP first");
+return false;
+}
+
+let name=document.getElementById("name").value.trim();
+let email=document.getElementById("email").value.trim().toLowerCase();
+let password=document.getElementById("password").value;
+let phone=document.getElementById("phone").value.trim();
+
+let role=document.getElementById("accountType").value;
+let profession=document.getElementById("profession").value;
+let course=document.getElementById("course").value;
+
+let file=document.getElementById("certificateUpload").files[0];
+let talent=document.getElementById("talentRequest").checked;
+
+let users=getUsers();
+
+/* DUPLICATE EMAIL */
+
+if(users.some(u=>u.email===email)){
+alert("Email already registered");
+return false;
+}
+
+let status="active";
+
+/* EXPERT VALIDATION */
+
+if(role==="expert"){
+
+if(!profession){
+alert("Select profession");
+return false;
+}
+
+if(file){
+status=checkCertificate(file);
+}
+else if(talent){
+status="admin_review";
+}
+else{
+alert("Upload certificate or request admin review");
+return false;
+}
+
+}
+
+/* CREATE USER */
+
+let user={
+
+id:Date.now(),
+
+name:name,
+
+email:email,
+
+password:password,
+
+phone:phone,
+
+role:role || "user",
+
+profession:profession || "",
+
+course:course || "",
+
+certificate:file?file.name:"",
+
+status:status
+
+};
+
+users.push(user);
+
+localStorage.setItem("users",JSON.stringify(users));
+
+alert("Registration Successful!");
+
+window.location.href="login.html";
+
+return false;
+
+}
+
 </script>
 
 </body>
