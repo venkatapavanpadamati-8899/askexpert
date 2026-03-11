@@ -1,1 +1,264 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel - AskExpert</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  font-family:Segoe UI, sans-serif;
+  background: linear-gradient(rgba(0,0,0,.6),rgba(0,0,0,.6)),
+              url("https://images.unsplash.com/photo-1552664730-d307ca884978?w=1600&q=80")
+              no-repeat center/cover fixed;
+  padding:40px;
+  color:#333;
+}
+.container{
+  background:white;
+  max-width:1000px;
+  margin:auto;
+  padding:35px;
+  border-radius:18px;
+  box-shadow:0 20px 60px rgba(0,0,0,.3);
+}
+h2{text-align:center;margin-bottom:20px;}
+.stats{margin-bottom:25px;font-size:16px;}
+.section{margin-bottom:40px;}
+.box{
+  background:#fafafa;
+  border-radius:10px;
+  padding:15px;
+  margin-bottom:12px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  box-shadow:0 4px 12px rgba(0,0,0,.08);
+}
+.details{max-width:85%;font-size:14px;}
+button{
+  background:#dc3545;
+  color:white;
+  border:none;
+  padding:8px 16px;
+  border-radius:6px;
+  cursor:pointer;
+}
+button:hover{background:#b02a37;}
+.alert{color:#d32f2f;font-weight:600;margin-left:6px;}
+.verify{color:green;font-weight:600;}
+.review{color:red;font-weight:600;}
+.logout-btn{
+  background:#0d6efd;
+  margin-bottom:20px;
+}
+.logout-btn:hover{background:#084298;}
+</style>
+</head>
+<body onload="loadAdmin()">
+<div class="container">
+<h2>Admin Panel - AskExpert</h2>
+<button class="logout-btn" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+
+<!-- PLATFORM STATS -->
+<div class="stats" id="platformStats"></div>
+
+<!-- USERS -->
+<div class="section">
+<h3>👤 Registered Users</h3>
+<div id="usersList"></div>
+</div>
+
+<!-- QUESTIONS -->
+<div class="section">
+<h3>❓ All Questions</h3>
+<div id="adminQuestions"></div>
+</div>
+
+<!-- RATINGS -->
+<div class="section">
+<h3>⭐ Expert Ratings</h3>
+<div id="ratingsList"></div>
+</div>
+</div>
+
+<script>
+/* ----------------------- SANITIZER ----------------------- */
+function clean(text){ return text ? text.replace(/</g,"&lt;").replace(/>/g,"&gt;") : ""; }
+
+/* ----------------------- ADMIN SECURITY ----------------------- */
+function loadAdmin(){
+  let user = JSON.parse(localStorage.getItem("loggedInUser"));
+  if(!user || user.role !== "admin" || user.email !== "admin@askexpert.com"){
+    alert("Admin access only!");
+    window.location.href="login.html";
+    return;
+  }
+  loadUsers();
+  loadQuestions();
+  loadRatings();
+  loadStats();
+}
+
+/* ----------------------- LOGOUT ----------------------- */
+function logout(){
+  localStorage.removeItem("loggedInUser");
+  window.location.href="login.html";
+}
+
+/* ----------------------- VALID PROFESSIONS ----------------------- */
+const validProfessions=["doctor","lawyer","engineer","teacher","police","arbitrator","business","lecturer","professor","researcher","finance","sales","marketing","startup","it","psychologist","career"];
+
+/* ----------------------- USER VERIFICATION ----------------------- */
+function verifyMarks(user){
+  let m10 = Number(user.marks10||0);
+  let mInter = Number(user.marksInter||0);
+  let mDegree = Number(user.marksDegree||0);
+  let avg = (m10+mInter+mDegree)/3;
+  if(avg>=65) return "ai_certified";
+  else if(avg>=50) return "verified";
+  else return "review";
+}
+
+/* ----------------------- FAKE USER DETECTION ----------------------- */
+function detectFakeUser(u){
+  let score=0;
+  if(!u.name || u.name.length<3) score++;
+  if(u.email.includes("test") || u.email.includes("fake") || u.email.includes("temp")) score++;
+  if(!u.profession) score++;
+  return score>=2;
+}
+
+/* ----------------------- SPAM DETECTION ----------------------- */
+function detectSpam(text){
+  const spamWords=["buy","offer","call now","visit"];
+  text = text.toLowerCase();
+  return spamWords.some(word=>text.includes(word));
+}
+
+/* ----------------------- LOAD USERS ----------------------- */
+function loadUsers(){
+  let users = JSON.parse(localStorage.getItem("users")) || [];
+  let container=document.getElementById("usersList");
+  container.innerHTML="";
+  if(users.length===0){ container.innerHTML="<p>No users found.</p>"; return; }
+  users.forEach((u,index)=>{
+    let div=document.createElement("div");
+    div.className="box";
+    let alertMsg="";
+    if(!u.name || !u.email){ alertMsg=`<span class='alert'>⚠ Incomplete Profile</span>`; }
+    else if(u.profession && !validProfessions.includes(u.profession.toLowerCase())){ alertMsg=`<span class='alert'>⚠ Suspicious Profession</span>`; }
+    else if(detectFakeUser(u)){ alertMsg=`<span class='alert'>⚠ Fake User Suspected</span>`; }
+    let status = verifyMarks(u);
+    let statusText="";
+    if(status==="ai_certified"){ statusText="<span class='verify'>AI Certified Professional 🤖 (65%+)</span>"; }
+    else if(status==="verified"){ statusText="<span class='verify'>Verified Professional ✅</span>"; }
+    else{ statusText="<span class='review'>Admin Review Needed ⚠</span>"; }
+    div.innerHTML=`
+      <div class="details">
+        <b>Name:</b> ${clean(u.name)}<br>
+        <b>Email:</b> ${clean(u.email)}<br>
+        <b>Role:</b> ${u.role || "user"}<br>
+        <b>Profession:</b> ${clean(u.profession) || "N/A"} ${alertMsg}<br>
+        <b>Status:</b> ${statusText}
+      </div>
+      <button onclick="deleteUser(${index})"><i class="fa-solid fa-trash"></i> Delete</button>
+    `;
+    container.appendChild(div);
+  });
+}
+
+/* ----------------------- DELETE USER ----------------------- */
+function deleteUser(index){
+  if(!confirm("Delete this user?")) return;
+  let users = JSON.parse(localStorage.getItem("users")) || [];
+  users.splice(index,1);
+  localStorage.setItem("users",JSON.stringify(users));
+  loadUsers();
+  loadStats();
+}
+
+/* ----------------------- LOAD QUESTIONS ----------------------- */
+function loadQuestions(){
+  let questions = JSON.parse(localStorage.getItem("questions")) || [];
+  let container=document.getElementById("adminQuestions");
+  container.innerHTML="";
+  if(questions.length===0){ container.innerHTML="<p>No questions found.</p>"; return; }
+  questions.forEach((q,index)=>{
+    let div=document.createElement("div");
+    div.className="box";
+    let alertMsg="";
+    if(q.profession && !validProfessions.includes(q.profession.toLowerCase())){ alertMsg=`<span class='alert'>⚠ Suspicious Profession</span>`; }
+    if(detectSpam(q.question)){ alertMsg=`<span class='alert'>⚠ Possible Spam</span>`; }
+    div.innerHTML=`
+      <div class="details">
+        <b>Question:</b> ${clean(q.question)}<br>
+        <b>Expert:</b> ${clean(q.profession)} ${alertMsg}<br>
+        <b>Answer:</b> ${clean(q.answer) || "No answer yet"}
+      </div>
+      <button onclick="deleteQuestion(${index})"><i class="fa-solid fa-trash"></i> Delete</button>
+    `;
+    container.appendChild(div);
+  });
+}
+
+/* ----------------------- DELETE QUESTION ----------------------- */
+function deleteQuestion(index){
+  if(!confirm("Delete this question?")) return;
+  let questions = JSON.parse(localStorage.getItem("questions")) || [];
+  questions.splice(index,1);
+  localStorage.setItem("questions",JSON.stringify(questions));
+  loadQuestions();
+  loadStats();
+}
+
+/* ----------------------- LOAD RATINGS ----------------------- */
+function loadRatings(){
+  let ratings = JSON.parse(localStorage.getItem("expertRatings")) || {};
+  let container=document.getElementById("ratingsList");
+  container.innerHTML="";
+  if(Object.keys(ratings).length===0){ container.innerHTML="<p>No ratings available.</p>"; return; }
+  for(let expert in ratings){
+    let avg=(ratings[expert].total/ratings[expert].count).toFixed(1);
+    let div=document.createElement("div");
+    div.className="box";
+    div.innerHTML=`
+      <div class="details">
+        <b>Expert:</b> ${clean(expert)}<br>
+        <b>Average Rating:</b> ⭐ ${avg} (${ratings[expert].count} ratings)
+      </div>
+      <button onclick="deleteRating('${expert}')"><i class="fa-solid fa-trash"></i> Reset</button>
+    `;
+    container.appendChild(div);
+  }
+}
+
+/* ----------------------- RESET RATINGS ----------------------- */
+function deleteRating(expert){
+  if(!confirm("Reset ratings?")) return;
+  let ratings = JSON.parse(localStorage.getItem("expertRatings")) || {};
+  delete ratings[expert];
+  localStorage.setItem("expertRatings",JSON.stringify(ratings));
+  loadRatings();
+}
+
+/* ----------------------- PLATFORM STATS ----------------------- */
+function loadStats(){
+  let users = JSON.parse(localStorage.getItem("users")) || [];
+  let questions = JSON.parse(localStorage.getItem("questions")) || [];
+  let experts = users.filter(u=>u.role==="expert");
+  let answers = questions.filter(q=>q.answer);
+  let statsDiv = document.getElementById("platformStats");
+  statsDiv.innerHTML=`
+    <b>Total Users:</b> ${users.length} | 
+    <b>Total Experts:</b> ${experts.length} | 
+    <b>Total Questions:</b> ${questions.length} | 
+    <b>Total Answers:</b> ${answers.length}
+  `;
+}
+</script>
+</body>
+</html>
