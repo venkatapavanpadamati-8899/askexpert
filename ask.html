@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,41 +20,80 @@ padding:0;
 font-family:Segoe UI,Arial;
 }
 
-/* Animated Background */
+/* MODERN BACKGROUND */
 
 body{
-background:linear-gradient(-45deg,#667eea,#764ba2,#6a11cb,#2575fc);
-background-size:400% 400%;
-animation:gradientMove 12s ease infinite;
+
+background:
+linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)),
+url("https://images.unsplash.com/photo-1518770660439-4636190af475");
+
+background-size:cover;
+background-position:center;
+background-attachment:fixed;
 
 min-height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
 padding:30px;
+
+color:white;
 }
 
-@keyframes gradientMove{
-0%{background-position:0% 50%;}
-50%{background-position:100% 50%;}
-100%{background-position:0% 50%;}
+/* FLOATING SHAPES */
+
+.bg-shapes::before,
+.bg-shapes::after{
+content:"";
+position:absolute;
+width:320px;
+height:320px;
+border-radius:50%;
+background:rgba(255,255,255,0.15);
+filter:blur(90px);
+animation:move 10s infinite alternate;
 }
 
-/* Glass Card */
+.bg-shapes::before{
+top:5%;
+left:8%;
+}
+
+.bg-shapes::after{
+bottom:5%;
+right:8%;
+}
+
+@keyframes move{
+from{transform:translateY(0)}
+to{transform:translateY(50px)}
+}
+
+/* GLASS CARD */
 
 .ask-box{
-background:rgba(255,255,255,0.15);
-backdrop-filter:blur(15px);
+
+background:rgba(255,255,255,0.12);
+backdrop-filter:blur(18px);
 
 padding:40px;
-width:500px;
+width:520px;
 
-border-radius:18px;
-box-shadow:0 20px 50px rgba(0,0,0,.25);
+border-radius:20px;
+
+border:1px solid rgba(255,255,255,0.25);
+
+box-shadow:0 25px 60px rgba(0,0,0,.35);
 
 animation:floatCard 6s ease-in-out infinite;
 
-color:white;
+transition:0.4s;
+}
+
+.ask-box:hover{
+transform:translateY(-5px) scale(1.02);
+box-shadow:0 30px 70px rgba(0,0,0,.5);
 }
 
 @keyframes floatCard{
@@ -62,20 +102,30 @@ color:white;
 100%{transform:translateY(0);}
 }
 
+/* TITLE */
+
 h2{
 text-align:center;
 margin-bottom:20px;
+font-size:28px;
+letter-spacing:1px;
 }
 
-/* Inputs */
+/* INPUTS */
 
 textarea,select,input{
 width:100%;
-padding:12px;
-border-radius:8px;
+padding:13px 14px;
+border-radius:10px;
 border:none;
 margin-bottom:15px;
 font-size:14px;
+
+background:rgba(255,255,255,0.2);
+color:white;
+
+outline:none;
+transition:0.3s;
 }
 
 textarea{
@@ -83,27 +133,57 @@ height:120px;
 resize:none;
 }
 
-/* Buttons */
+textarea::placeholder,
+input::placeholder{
+color:#eee;
+}
+
+textarea:focus,
+input:focus,
+select:focus{
+background:rgba(255,255,255,0.3);
+}
+
+/* BUTTONS */
 
 button{
 width:100%;
-padding:12px;
+padding:13px;
 border:none;
-border-radius:8px;
+border-radius:10px;
 font-size:15px;
 cursor:pointer;
 margin-top:10px;
+
+font-weight:600;
+letter-spacing:0.5px;
+
+transition:0.3s;
 }
 
-.voice-btn{background:#ff5722;color:white;}
-.ai-btn{background:#8e24aa;color:white;}
-.submit-btn{background:#28a745;color:white;}
+/* BUTTON COLORS */
+
+.voice-btn{
+background:linear-gradient(45deg,#ff5722,#ff9800);
+color:white;
+}
+
+.ai-btn{
+background:linear-gradient(45deg,#7b1fa2,#9c27b0);
+color:white;
+}
+
+.submit-btn{
+background:linear-gradient(45deg,#00c853,#4caf50);
+color:white;
+}
 
 button:hover{
-opacity:.9;
+transform:translateY(-2px) scale(1.02);
+box-shadow:0 8px 20px rgba(0,0,0,0.3);
 }
 
-/* Error message */
+/* ERROR MESSAGE */
 
 #errorMsg{
 text-align:center;
@@ -111,7 +191,7 @@ margin-bottom:12px;
 font-weight:bold;
 }
 
-/* Back link */
+/* HOME LINK */
 
 .home-link{
 text-align:center;
@@ -257,8 +337,6 @@ localStorage.setItem("questions",JSON.stringify(questions));
 error.style.color="lightgreen";
 error.innerText="Question submitted successfully!";
 
-/* reset form */
-
 document.getElementById("question").value="";
 document.getElementById("notes").value="";
 document.getElementById("professionSelect").value="";
@@ -321,8 +399,6 @@ return;
 
 const recognition=new SpeechRecognition();
 
-/* Better for India */
-
 recognition.lang="en-IN";
 
 recognition.start();
@@ -345,6 +421,8 @@ document.getElementById("question").value=voiceText;
 
 <body>
 
+<div class="bg-shapes"></div>
+
 <div class="ask-box">
 
 <h2>Ask Your Question</h2>
@@ -364,11 +442,11 @@ document.getElementById("question").value=voiceText;
 placeholder="Explain your problem..."></textarea>
 
 <button class="voice-btn" onclick="startVoice()">
-🎤 Speak Question
+<i class="fa-solid fa-microphone"></i> Speak Question
 </button>
 
 <button class="ai-btn" onclick="identifyExpert()">
-🤖 AI Identify Expert
+<i class="fa-solid fa-robot"></i> AI Identify Expert
 </button>
 
 <label>Select Professional</label>
@@ -400,7 +478,7 @@ placeholder="Extra information">
 
 <button class="submit-btn"
 onclick="submitQuestion()">
-Submit Question
+<i class="fa-solid fa-paper-plane"></i> Submit Question
 </button>
 
 <div class="home-link">
@@ -411,3 +489,4 @@ Submit Question
 
 </body>
 </html>
+
