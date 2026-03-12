@@ -33,6 +33,8 @@ background-size:cover;
 background-position:center;
 }
 
+/* LOGIN CARD */
+
 .login-box{
 
 background:rgba(255,255,255,0.15);
@@ -59,6 +61,8 @@ animation:floatCard 6s ease-in-out infinite;
 100%{transform:translateY(0px);}
 }
 
+/* TITLE */
+
 .logo{
 font-size:30px;
 font-weight:700;
@@ -74,6 +78,8 @@ font-size:14px;
 opacity:.9;
 margin-bottom:25px;
 }
+
+/* INPUTS */
 
 .input-group{
 position:relative;
@@ -104,6 +110,8 @@ input:focus{
 background:rgba(255,255,255,0.28);
 }
 
+/* BUTTONS */
+
 button{
 width:100%;
 padding:13px;
@@ -129,6 +137,8 @@ background:#546e7a;
 color:white;
 }
 
+/* NAV BUTTONS */
+
 .navigation-buttons{
 display:flex;
 gap:10px;
@@ -150,6 +160,8 @@ color:white;
 background:#ff9800;
 color:white;
 }
+
+/* LINK */
 
 .register-link{
 margin-top:18px;
@@ -178,7 +190,7 @@ Ask<span>Expert</span>
 Ask questions from verified professionals
 </div>
 
-<form onsubmit="return loginUser()">
+<form id="loginForm">
 
 <div class="input-group">
 <i class="fa fa-envelope"></i>
@@ -194,7 +206,7 @@ Ask questions from verified professionals
 Show / Hide Password
 </button>
 
-<button type="submit" class="login-btn">
+<button type="submit" id="loginBtn" class="login-btn">
 Login
 </button>
 
@@ -226,71 +238,142 @@ Ask
 function getData(key){
 
 try{
+
 let data = JSON.parse(localStorage.getItem(key));
-return data ? data : [];
-}catch(e){
+
+if(Array.isArray(data) || typeof data === "object"){
+return data;
+}
+
 return [];
-}
+
+}catch(e){
+
+return [];
 
 }
 
-/* LOGIN FUNCTION */
+}
 
-function loginUser(){
+/* FULL XSS PROTECTION */
+
+function safe(text){
+
+if(!text) return "";
+
+return text.toString()
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+
+}
+
+/* LOGIN */
+
+document.getElementById("loginForm").addEventListener("submit",loginUser);
+
+function loginUser(e){
+
+e.preventDefault();
+
+/* prevent double click */
+
+let btn=document.getElementById("loginBtn");
+btn.disabled=true;
 
 let email=document.getElementById("loginEmail").value.trim().toLowerCase();
 let password=document.getElementById("loginPassword").value.trim();
 
 if(email==="" || password===""){
+
 alert("Please enter email and password");
-return false;
+btn.disabled=false;
+return;
+
+}
+
+/* email format */
+
+let emailRegex=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+if(!emailRegex.test(email)){
+
+alert("Invalid email format");
+btn.disabled=false;
+return;
+
 }
 
 let users=getData("users");
 
 let user=users.find(u =>
-u.email && u.password &&
+
+u.email &&
+u.password &&
 u.email.toLowerCase()===email &&
 u.password===password
+
 );
 
 if(!user){
+
 alert("Invalid email or password");
-return false;
+btn.disabled=false;
+return;
+
 }
 
-/* banned check */
+/* banned */
 
 if(user.banned){
+
 alert("Your account is banned");
-return false;
+btn.disabled=false;
+return;
+
 }
 
-/* save session */
+/* corrupted object protection */
+
+if(typeof user !== "object"){
+
+alert("Session error. Please login again");
+btn.disabled=false;
+return;
+
+}
+
+/* save login */
 
 localStorage.setItem("loggedInUser",JSON.stringify(user));
 
-let username = user.name || "User";
+let username=safe(user.name || "User");
 
 alert("Welcome "+username);
 
 /* role redirect */
 
 if(user.role==="admin"){
+
 window.location.href="admin.html";
+
 }
 else if(user.role==="expert"){
+
 window.location.href="dashboard.html";
+
 }
 else{
+
 window.location.href="ask.html";
-}
-
-return false;
 
 }
 
-/* SHOW PASSWORD */
+}
+
+/* PASSWORD TOGGLE */
 
 function togglePassword(){
 
