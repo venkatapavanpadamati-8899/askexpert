@@ -105,6 +105,13 @@ font-size:14px;
 outline:none;
 }
 
+/* FIX FOR WHITE DROPDOWN */
+
+select option{
+background:white;
+color:black;
+}
+
 input::placeholder{
 color:#eee;
 }
@@ -227,21 +234,39 @@ text-align:left;
 <div id="expertFields">
 
 <select id="profession">
+
 <option value="">Select Profession</option>
+
 <option>Doctor</option>
+<option>Nurse</option>
+<option>Pharmacist</option>
 <option>Lawyer</option>
+<option>Advocate</option>
 <option>Engineer</option>
+<option>Software Developer</option>
 <option>Teacher</option>
+<option>Lecturer</option>
+<option>Professor</option>
 <option>Police</option>
-<option>IT Support</option>
+<option>Army</option>
+<option>Banker</option>
+<option>Accountant</option>
+<option>Chartered Accountant</option>
 <option>Psychologist</option>
 <option>Career Advisor</option>
+<option>IT Support</option>
+<option>Business Consultant</option>
+<option>Entrepreneur</option>
+
 </select>
 
 <input id="course" placeholder="Course (Example: MBBS)">
 
-<label>Upload Certificate</label>
+<label>Upload Certificate (Professional Qualification Proof)</label>
 <input id="certificateUpload" type="file">
+
+<label>Upload Marks Memo (10th / Inter / Diploma / BTech / Degree)</label>
+<input id="marksMemoUpload" type="file">
 
 <label>
 <input type="checkbox" id="adminRequest">
@@ -319,27 +344,18 @@ alert("Wrong OTP");
 
 }
 
-/* SHOW EXPERT FIELDS */
-
 function toggleExpert(){
 
 let type=document.getElementById("accountType").value;
-
 let expertFields=document.getElementById("expertFields");
 
 if(type==="expert"){
-
 expertFields.style.display="block";
-
 }else{
-
 expertFields.style.display="none";
-
 }
 
 }
-
-/* AI CERTIFICATE CHECK */
 
 function aiCheck(file){
 
@@ -360,8 +376,6 @@ return "manual";
 
 }
 
-/* REGISTER */
-
 function registerUser(){
 
 if(!otpVerified){
@@ -380,11 +394,11 @@ let profession=document.getElementById("profession").value;
 let course=document.getElementById("course").value;
 
 let file=document.getElementById("certificateUpload").files[0];
+let marksMemo=document.getElementById("marksMemoUpload").files[0];
+
 let admin=document.getElementById("adminRequest").checked;
 
 let users=getUsers();
-
-/* duplicate email */
 
 if(users.some(u=>u.email===email)){
 alert("Email already exists");
@@ -405,15 +419,11 @@ if(file){
 let result=aiCheck(file);
 
 if(result==="verified"){
-
 status="verified";
 alert("AI verified certificate");
-
 }else{
-
 status="admin_review";
 alert("Certificate needs admin verification");
-
 }
 
 }else if(admin){
@@ -445,6 +455,8 @@ profession:profession || "",
 course:course || "",
 
 certificate:file?file.name:"",
+
+marksMemo:marksMemo?marksMemo.name:"",
 
 status:status
 
