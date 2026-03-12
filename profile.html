@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Expert Profile - AskExpert</title>
 
 <style>
@@ -256,7 +257,8 @@ Welcome to your expert profile dashboard.
 
 function getData(key){
 try{
-return JSON.parse(localStorage.getItem(key));
+let data = JSON.parse(localStorage.getItem(key));
+return data || null;
 }catch(e){
 return null;
 }
@@ -269,35 +271,46 @@ let data=getData(key);
 return Array.isArray(data) ? data : [];
 }
 
-/* XSS SAFE */
+/* FULL XSS PROTECTION */
 
 function safe(text){
+
 if(!text) return "";
+
 return text.toString()
 .replace(/&/g,"&amp;")
 .replace(/</g,"&lt;")
-.replace(/>/g,"&gt;");
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+
 }
 
-/* LOGIN CHECK */
+/* LOGIN CHECK AFTER LOAD */
+
+window.onload=function(){
 
 let user=getData("loggedInUser");
 
 if(!user){
 alert("Please login first");
 window.location.href="login.html";
+return;
 }
 
-if(user && user.banned){
+if(user.banned){
 alert("Your account is banned");
 window.location.href="login.html";
+return;
+}
+
+loadProfile(user);
+
 }
 
 /* LOAD PROFILE */
 
-function loadProfile(){
-
-let profile=user || {};
+function loadProfile(profile){
 
 document.getElementById("profileName").innerText=safe(profile.name || "Expert");
 
@@ -316,7 +329,6 @@ document.getElementById("profileRating").innerText="⭐".repeat(rating);
 let questions=getArray("questions");
 
 let qContainer=document.getElementById("questionsContainer");
-
 let aContainer=document.getElementById("answersContainer");
 
 qContainer.innerHTML="";
@@ -324,7 +336,9 @@ aContainer.innerHTML="";
 
 questions.forEach(q=>{
 
-if(profile.profession && q.profession && q.profession!==profile.profession) return;
+if(profile.profession &&
+q.profession &&
+q.profession.toLowerCase()!==profile.profession.toLowerCase()) return;
 
 let qDiv=document.createElement("div");
 qDiv.className="question-card";
@@ -364,8 +378,6 @@ document.getElementById(tabName+"Tab").classList.add("active");
 });
 
 });
-
-loadProfile();
 
 </script>
 
