@@ -12,12 +12,20 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 
 <style>
 
-*{box-sizing:border-box;}
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+font-family:Segoe UI,Arial;
+}
+
+/* Animated Background */
 
 body{
-margin:0;
-font-family:Segoe UI,Arial;
-background:linear-gradient(135deg,#667eea,#764ba2);
+background:linear-gradient(-45deg,#667eea,#764ba2,#6a11cb,#2575fc);
+background-size:400% 400%;
+animation:gradientMove 12s ease infinite;
+
 min-height:100vh;
 display:flex;
 justify-content:center;
@@ -25,22 +33,47 @@ align-items:center;
 padding:30px;
 }
 
-.ask-box{
-background:white;
-padding:40px;
-width:480px;
-border-radius:18px;
-box-shadow:0 20px 50px rgba(0,0,0,.25);
-animation:fadeIn .7s;
+@keyframes gradientMove{
+0%{background-position:0% 50%;}
+50%{background-position:100% 50%;}
+100%{background-position:0% 50%;}
 }
 
-h2{text-align:center;margin-bottom:20px;}
+/* Glass Card */
+
+.ask-box{
+background:rgba(255,255,255,0.15);
+backdrop-filter:blur(15px);
+
+padding:40px;
+width:500px;
+
+border-radius:18px;
+box-shadow:0 20px 50px rgba(0,0,0,.25);
+
+animation:floatCard 6s ease-in-out infinite;
+
+color:white;
+}
+
+@keyframes floatCard{
+0%{transform:translateY(0);}
+50%{transform:translateY(-8px);}
+100%{transform:translateY(0);}
+}
+
+h2{
+text-align:center;
+margin-bottom:20px;
+}
+
+/* Inputs */
 
 textarea,select,input{
 width:100%;
 padding:12px;
 border-radius:8px;
-border:1px solid #ccc;
+border:none;
 margin-bottom:15px;
 font-size:14px;
 }
@@ -49,6 +82,8 @@ textarea{
 height:120px;
 resize:none;
 }
+
+/* Buttons */
 
 button{
 width:100%;
@@ -64,7 +99,11 @@ margin-top:10px;
 .ai-btn{background:#8e24aa;color:white;}
 .submit-btn{background:#28a745;color:white;}
 
-button:hover{opacity:.9;}
+button:hover{
+opacity:.9;
+}
+
+/* Error message */
 
 #errorMsg{
 text-align:center;
@@ -72,69 +111,75 @@ margin-bottom:12px;
 font-weight:bold;
 }
 
+/* Back link */
+
 .home-link{
 text-align:center;
 margin-top:15px;
 }
 
-@keyframes fadeIn{
-from{opacity:0;transform:translateY(-20px);}
-to{opacity:1;transform:translateY(0);}
+.home-link a{
+color:white;
+text-decoration:none;
 }
 
 </style>
 
 <script>
 
-/* -------------------------
-SAFE JSON FUNCTION
-------------------------- */
+/* SAFE JSON */
 
 function getData(key){
 try{
-let data = JSON.parse(localStorage.getItem(key));
-return data ? data : null;
+return JSON.parse(localStorage.getItem(key)) || null;
 }catch(e){
 return null;
 }
 }
 
-/* -------------------------
-XSS SECURITY
-------------------------- */
+/* XSS PROTECTION */
 
 function safe(text){
 if(!text) return "";
 return text.toString()
+.replace(/&/g,"&amp;")
 .replace(/</g,"&lt;")
-.replace(/>/g,"&gt;");
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
 }
 
-/* -------------------------
-LOGIN CHECK
-------------------------- */
+/* LOGIN CHECK */
 
-let user = getData("loggedInUser");
+window.onload=function(){
+
+let user=getData("loggedInUser");
 
 if(!user){
 alert("Please login first");
-window.location.href="login.html";
+window.location.replace("login.html");
+return;
 }
 
-if(user && user.banned){
+if(user.banned){
 alert("Your account is banned");
-window.location.href="login.html";
+window.location.replace("login.html");
 }
 
-/* -------------------------
-SPAM DETECTION
-------------------------- */
+}
+
+/* SPAM DETECTION */
 
 function detectSpam(text){
 
 text=text.toLowerCase();
 
-if(text.includes("test") || text.includes("asdf")) return true;
+if(
+text.includes("test") ||
+text.includes("asdf") ||
+text.includes("qwerty") ||
+text.includes("dummy")
+) return true;
 
 if(/(.)\1{5,}/.test(text)) return true;
 
@@ -142,11 +187,11 @@ return false;
 
 }
 
-/* -------------------------
-SUBMIT QUESTION
-------------------------- */
+/* SUBMIT QUESTION */
 
 function submitQuestion(){
+
+let user=getData("loggedInUser");
 
 let question=document.getElementById("question").value.trim();
 let profession=document.getElementById("professionSelect").value;
@@ -161,7 +206,7 @@ error.style.color="red";
 return;
 }
 
-if(question.length < 10){
+if(question.length<10){
 error.innerText="Question must be at least 10 characters";
 error.style.color="red";
 return;
@@ -179,7 +224,7 @@ error.style.color="red";
 return;
 }
 
-let questions = getData("questions") || [];
+let questions=getData("questions") || [];
 
 let newQuestion={
 
@@ -209,26 +254,29 @@ questions.push(newQuestion);
 
 localStorage.setItem("questions",JSON.stringify(questions));
 
-error.style.color="green";
+error.style.color="lightgreen";
 error.innerText="Question submitted successfully!";
+
+/* reset form */
 
 document.getElementById("question").value="";
 document.getElementById("notes").value="";
 document.getElementById("professionSelect").value="";
+document.getElementById("language").value="English";
 
 }
 
-/* -------------------------
-AI EXPERT DETECTION
-------------------------- */
+/* AI EXPERT DETECTION */
 
 function identifyExpert(){
 
 let text=document.getElementById("question").value.toLowerCase();
 
+if(!text) return;
+
 let profession="";
 
-if(text.includes("fever") || text.includes("medicine") || text.includes("pain"))
+if(text.includes("fever") || text.includes("medicine") || text.includes("pain") || text.includes("hospital"))
 profession="doctor";
 
 else if(text.includes("court") || text.includes("law") || text.includes("case"))
@@ -253,18 +301,18 @@ error.style.color="orange";
 }
 else{
 error.innerText="AI Suggests: "+profession;
-error.style.color="blue";
+error.style.color="cyan";
 }
 
 }
 
-/* -------------------------
-VOICE INPUT
-------------------------- */
+/* VOICE INPUT */
 
 function startVoice(){
 
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+const SpeechRecognition=
+window.SpeechRecognition ||
+window.webkitSpeechRecognition;
 
 if(!SpeechRecognition){
 alert("Voice recognition not supported");
@@ -273,7 +321,9 @@ return;
 
 const recognition=new SpeechRecognition();
 
-recognition.lang="en-US";
+/* Better for India */
+
+recognition.lang="en-IN";
 
 recognition.start();
 
@@ -281,12 +331,10 @@ recognition.onresult=function(event){
 
 let voiceText=event.results[0][0].transcript;
 
+if(voiceText){
 document.getElementById("question").value=voiceText;
+}
 
-};
-
-recognition.onend=function(){
-console.log("Voice input finished");
 };
 
 }
@@ -312,17 +360,23 @@ console.log("Voice input finished");
 
 <label>Describe your problem</label>
 
-<textarea id="question" placeholder="Explain your problem..."></textarea>
+<textarea id="question"
+placeholder="Explain your problem..."></textarea>
 
-<button class="voice-btn" onclick="startVoice()">🎤 Speak Question</button>
+<button class="voice-btn" onclick="startVoice()">
+🎤 Speak Question
+</button>
 
-<button class="ai-btn" onclick="identifyExpert()">🤖 AI Identify Expert</button>
+<button class="ai-btn" onclick="identifyExpert()">
+🤖 AI Identify Expert
+</button>
 
 <label>Select Professional</label>
 
 <select id="professionSelect">
 
 <option value="">Select Profession</option>
+
 <option value="doctor">Doctor</option>
 <option value="lawyer">Lawyer</option>
 <option value="engineer">Engineer</option>
@@ -340,12 +394,17 @@ console.log("Voice input finished");
 
 <label>Optional Notes</label>
 
-<input type="text" id="notes" placeholder="Extra information">
+<input type="text"
+id="notes"
+placeholder="Extra information">
 
-<button class="submit-btn" onclick="submitQuestion()">Submit Question</button>
+<button class="submit-btn"
+onclick="submitQuestion()">
+Submit Question
+</button>
 
 <div class="home-link">
-<a href="index.html">Back to Home</a>
+<a href="index.html">⬅ Back to Home</a>
 </div>
 
 </div>
