@@ -1,389 +1,245 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Login - AskExpert</title>
-
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
+/* Global Reset */
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Poppins',sans-serif;}
 
-*{
-box-sizing:border-box;
-margin:0;
-padding:0;
-font-family:'Segoe UI',Arial;
-}
-
+/* Body + Animated Background */
 body{
-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-
-background:
-linear-gradient(rgba(0,0,0,0.55),rgba(0,0,0,0.55)),
-url("https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1600");
-
-background-size:cover;
-background-position:center;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background: linear-gradient(rgba(0,0,0,0.45),rgba(0,0,0,0.55)), url("https://images.unsplash.com/photo-1556761175-4b46a572b786") center/cover no-repeat;
+  background-size:cover;
+  animation:bgMove 15s infinite alternate;
+  overflow:hidden;
 }
 
-/* LOGIN CARD */
+@keyframes bgMove{
+  0%{transform:scale(1);}
+  100%{transform:scale(1.08);}
+}
 
+/* Glassmorphism Login Card */
 .login-box{
-
-background:rgba(255,255,255,0.15);
-backdrop-filter:blur(18px);
-
-padding:45px;
-border-radius:22px;
-
-width:380px;
-
-box-shadow:0 30px 70px rgba(0,0,0,0.5);
-
-text-align:center;
-
-color:white;
-
-animation:floatCard 6s ease-in-out infinite;
-
+  width:380px;
+  padding:40px;
+  border-radius:20px;
+  background:rgba(255,255,255,0.15);
+  backdrop-filter:blur(18px);
+  border:1px solid rgba(255,255,255,0.2);
+  box-shadow:0 20px 60px rgba(0,0,0,0.4);
+  color:white;
+  text-align:center;
+  animation:floatCard 6s ease-in-out infinite, fadeIn 1s ease forwards;
 }
 
 @keyframes floatCard{
-0%{transform:translateY(0px);}
-50%{transform:translateY(-10px);}
-100%{transform:translateY(0px);}
+  0%{transform:translateY(0);}
+  50%{transform:translateY(-8px);}
+  100%{transform:translateY(0);}
 }
 
-/* TITLE */
+@keyframes fadeIn{
+  from{opacity:0; transform:translateY(-20px);}
+  to{opacity:1; transform:translateY(0);}
+}
 
+/* Logo */
 .logo{
-font-size:30px;
-font-weight:700;
-margin-bottom:10px;
+  font-size:36px;
+  font-weight:600;
+  margin-bottom:10px;
 }
-
-.logo i,.logo span{
-color:#ffd54f;
+.logo i{
+  color:#ffd54f;
+  margin-right:8px;
 }
+.ask{color:white;}
+.expert{color:#ffd54f;}
 
+/* Subtitle */
 .subtitle{
-font-size:14px;
-opacity:.9;
-margin-bottom:25px;
+  font-size:16px;
+  opacity:.85;
+  margin-bottom:30px;
 }
 
-/* INPUTS */
-
+/* Input Groups */
 .input-group{
-position:relative;
-margin-bottom:18px;
+  position:relative;
+  margin:15px 0;
 }
-
 .input-group i{
-position:absolute;
-left:12px;
-top:50%;
-transform:translateY(-50%);
-color:white;
-opacity:.8;
+  position:absolute;
+  left:12px;
+  top:50%;
+  transform:translateY(-50%);
+  color:#eee;
 }
-
 input{
-width:100%;
-padding:13px 12px 13px 40px;
-border-radius:12px;
-border:none;
-font-size:14px;
-outline:none;
-background:rgba(255,255,255,0.18);
-color:white;
+  width:100%;
+  padding:12px 12px 12px 40px;
+  border-radius:10px;
+  border:none;
+  background:rgba(255,255,255,0.2);
+  color:white;
+  outline:none;
+  font-size:15px;
+  transition:0.3s;
 }
-
 input:focus{
-background:rgba(255,255,255,0.28);
+  background:rgba(255,255,255,0.3);
+  box-shadow:0 0 10px rgba(255,255,255,0.3);
 }
+input::placeholder{color:#ddd;}
 
-/* BUTTONS */
-
+/* Buttons */
 button{
-width:100%;
-padding:13px;
-border:none;
-border-radius:12px;
-font-size:15px;
-cursor:pointer;
-margin-top:10px;
-transition:.25s;
+  width:100%;
+  padding:14px;
+  border-radius:10px;
+  border:none;
+  font-size:16px;
+  cursor:pointer;
+  background:linear-gradient(45deg,#00c6ff,#0072ff);
+  transition:0.3s;
+}
+button:hover{
+  transform:scale(1.05);
+  box-shadow:0 10px 25px rgba(0,0,0,0.4);
 }
 
-.login-btn{
-background:linear-gradient(90deg,#2196f3,#42a5f5);
-color:white;
+/* Navigation Buttons */
+.navigation{
+  display:flex;
+  gap:12px;
+  margin-top:20px;
 }
-
-.login-btn:hover{
-transform:scale(1.04);
+.navigation button{
+  flex:1;
+  font-size:14px;
+  padding:10px;
+  border-radius:10px;
+  box-shadow:0 6px 20px rgba(0,0,0,0.35);
 }
+.register{background:linear-gradient(45deg,#4caf50,#388e3c);}
+.ask-btn{background:linear-gradient(45deg,#ff9800,#f57c00);}
 
-.show-btn{
-background:#546e7a;
-color:white;
+/* Responsive */
+@media(max-width:450px){
+  .login-box{width:90%; padding:35px;}
+  .logo{font-size:30px;}
+  .subtitle{font-size:14px; margin-bottom:20px;}
+  input{font-size:14px;}
+  button{font-size:15px;}
 }
-
-/* NAV BUTTONS */
-
-.navigation-buttons{
-display:flex;
-gap:10px;
-margin-top:20px;
-}
-
-.navigation-buttons button{
-flex:1;
-padding:10px;
-font-size:13px;
-}
-
-.register-btn{
-background:#4caf50;
-color:white;
-}
-
-.ask-btn{
-background:#ff9800;
-color:white;
-}
-
-/* LINK */
-
-.register-link{
-margin-top:18px;
-font-size:14px;
-}
-
-.register-link a{
-color:#ffd54f;
-font-weight:bold;
-text-decoration:none;
-}
-
 </style>
 </head>
 
 <body>
-
 <div class="login-box">
 
-<div class="logo">
-<i class="fa-solid fa-user-doctor"></i>
-Ask<span>Expert</span>
+  <div class="logo">
+    <i class="fa-solid fa-user-doctor"></i>
+    <span class="ask">Ask</span><span class="expert">Expert</span>
+  </div>
+  <p class="subtitle">Ask questions from verified professionals</p>
+
+  <form onsubmit="return loginUser()">
+    <div class="input-group">
+      <i class="fa fa-envelope"></i>
+      <input id="email" type="email" placeholder="Email Address" required>
+    </div>
+    <div class="input-group">
+      <i class="fa fa-lock"></i>
+      <input id="password" type="password" placeholder="Password" required>
+    </div>
+    <button id="loginBtn" type="submit">Login</button>
+  </form>
+
+  <div class="navigation">
+    <button class="register" onclick="location.href='register.html'">Register</button>
+    <button class="ask-btn" onclick="location.href='ask.html'">Ask Question</button>
+  </div>
 </div>
 
-<div class="subtitle">
-Ask questions from verified professionals
-</div>
-
-<form id="loginForm">
-
-<div class="input-group">
-<i class="fa fa-envelope"></i>
-<input type="email" id="loginEmail" placeholder="Enter Email" required>
-</div>
-
-<div class="input-group">
-<i class="fa fa-lock"></i>
-<input type="password" id="loginPassword" placeholder="Enter Password" required>
-</div>
-
-<button type="button" class="show-btn" onclick="togglePassword()">
-Show / Hide Password
-</button>
-
-<button type="submit" id="loginBtn" class="login-btn">
-Login
-</button>
-
-</form>
-
-<div class="navigation-buttons">
-
-<button class="register-btn" onclick="location.href='register.html'">
-Register
-</button>
-
-<button class="ask-btn" onclick="location.href='ask.html'">
-Ask
-</button>
-
-</div>
-
-<div class="register-link">
-<p>Don't have an account?</p>
-<a href="register.html">Register Here</a>
-</div>
-
-</div>
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
 <script>
+const firebaseConfig = {
+  apiKey:"AIzaSyDEzJ2LOdgNU6SCMLGHqa0C0hsjQVeOYO8",
+  authDomain:"askexpert-b642b.firebaseapp.com",
+  projectId:"askexpert-b642b",
+  storageBucket:"askexpert-b642b.appspot.com",
+  messagingSenderId:"407440869696",
+  appId:"1:407440869696:web:504234dd881a7e875dd2a5"
+};
+if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-/* SAFE JSON */
+async function loginUser(){
+    let email = document.getElementById("email").value.trim().toLowerCase();
+    let password = document.getElementById("password").value.trim();
+    let btn = document.getElementById("loginBtn");
 
-function getData(key){
+    if(!email || !password){
+        alert("Please enter both email and password");
+        return false;
+    }
+    btn.disabled = true;
+    btn.innerText = "Logging in...";
 
-try{
+    try{
+        let userCredential = await auth.signInWithEmailAndPassword(email,password);
+        let uid = userCredential.user.uid;
 
-let data = JSON.parse(localStorage.getItem(key));
+        let querySnapshot = await db.collection("users").where("email","==",email).get();
+        if(querySnapshot.empty){
+            alert("User profile not found in database");
+            await auth.signOut();
+            btn.disabled=false;
+            btn.innerText="Login";
+            return false;
+        }
 
-if(Array.isArray(data) || typeof data === "object"){
-return data;
+        let userData = querySnapshot.docs[0].data();
+        if(userData.banned === true){
+            alert("Your account has been banned");
+            await auth.signOut();
+            btn.disabled=false;
+            btn.innerText="Login";
+            return false;
+        }
+
+        localStorage.setItem("user", JSON.stringify(userData));
+        localStorage.setItem("uid", uid);
+
+        alert("Login successful");
+        window.location.href="dashboard.html";
+    } catch(error){
+        console.error(error);
+        if(error.code === "auth/user-not-found") alert("User not found");
+        else if(error.code === "auth/wrong-password") alert("Incorrect password");
+        else if(error.code === "auth/invalid-email") alert("Invalid email format");
+        else alert(error.message);
+        btn.disabled=false;
+        btn.innerText="Login";
+    }
+    return false;
 }
-
-return [];
-
-}catch(e){
-
-return [];
-
-}
-
-}
-
-/* FULL XSS PROTECTION */
-
-function safe(text){
-
-if(!text) return "";
-
-return text.toString()
-.replace(/&/g,"&amp;")
-.replace(/</g,"&lt;")
-.replace(/>/g,"&gt;")
-.replace(/"/g,"&quot;")
-.replace(/'/g,"&#039;");
-
-}
-
-/* LOGIN */
-
-document.getElementById("loginForm").addEventListener("submit",loginUser);
-
-function loginUser(e){
-
-e.preventDefault();
-
-/* prevent double click */
-
-let btn=document.getElementById("loginBtn");
-btn.disabled=true;
-
-let email=document.getElementById("loginEmail").value.trim().toLowerCase();
-let password=document.getElementById("loginPassword").value.trim();
-
-if(email==="" || password===""){
-
-alert("Please enter email and password");
-btn.disabled=false;
-return;
-
-}
-
-/* email format */
-
-let emailRegex=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-if(!emailRegex.test(email)){
-
-alert("Invalid email format");
-btn.disabled=false;
-return;
-
-}
-
-let users=getData("users");
-
-let user=users.find(u =>
-
-u.email &&
-u.password &&
-u.email.toLowerCase()===email &&
-u.password===password
-
-);
-
-if(!user){
-
-alert("Invalid email or password");
-btn.disabled=false;
-return;
-
-}
-
-/* banned */
-
-if(user.banned){
-
-alert("Your account is banned");
-btn.disabled=false;
-return;
-
-}
-
-/* corrupted object protection */
-
-if(typeof user !== "object"){
-
-alert("Session error. Please login again");
-btn.disabled=false;
-return;
-
-}
-
-/* save login */
-
-localStorage.setItem("loggedInUser",JSON.stringify(user));
-
-let username=safe(user.name || "User");
-
-alert("Welcome "+username);
-
-/* role redirect */
-
-if(user.role==="admin"){
-
-window.location.href="admin.html";
-
-}
-else if(user.role==="expert"){
-
-window.location.href="dashboard.html";
-
-}
-else{
-
-window.location.href="ask.html";
-
-}
-
-}
-
-/* PASSWORD TOGGLE */
-
-function togglePassword(){
-
-let pass=document.getElementById("loginPassword");
-
-pass.type = (pass.type==="password") ? "text" : "password";
-
-}
-
 </script>
-
 </body>
 </html>
