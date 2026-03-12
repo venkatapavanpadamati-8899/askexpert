@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AskExpert Chat</title>
+
+<style>
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+font-family:Segoe UI,sans-serif;
+}
+
+/* Background */
+
+body{
+
+background:
+linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),
+url("https://images.unsplash.com/photo-1522202176988-66273c2fd55f");
+
+background-size:cover;
+background-position:center;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+height:100vh;
+
+}
+
+/* Chat container */
+
+.chat-container{
+
+width:460px;
+height:720px;
+
+display:flex;
+flex-direction:column;
+
+background:rgba(255,255,255,0.15);
+backdrop-filter:blur(18px);
+
+border-radius:20px;
+
+overflow:hidden;
+
+box-shadow:0 20px 60px rgba(0,0,0,0.4);
+
+animation:floatCard 6s ease-in-out infinite;
+
+}
+
+@keyframes floatCard{
+
+0%{transform:translateY(0)}
+50%{transform:translateY(-6px)}
+100%{transform:translateY(0)}
+
+}
+
+/* Header */
+
+.chat-header{
+
+background:linear-gradient(90deg,#2563eb,#4f46e5);
+
+color:white;
+
+padding:15px;
+
+font-weight:bold;
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+}
+
+/* Messages */
+
+.chat-messages{
+
+flex:1;
+
+padding:20px;
+
+overflow-y:auto;
+
+display:flex;
+flex-direction:column;
+
+gap:12px;
+
+}
+
+/* Scrollbar */
+
+.chat-messages::-webkit-scrollbar{
+width:6px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb{
+background:#4f46e5;
+border-radius:10px;
+}
+
+/* Message */
+
+.message{
+
+display:flex;
+gap:10px;
+align-items:flex-start;
+
+max-width:80%;
+
+padding:10px 15px;
+
+border-radius:18px;
+
+font-size:14px;
+
+animation:fadeMessage .3s ease;
+
+}
+
+@keyframes fadeMessage{
+
+from{
+opacity:0;
+transform:translateY(10px);
+}
+
+to{
+opacity:1;
+transform:translateY(0);
+}
+
+}
+
+/* Avatar */
+
+.message img{
+
+width:32px;
+height:32px;
+
+border-radius:50%;
+
+}
+
+/* User message */
+
+.message.user{
+
+align-self:flex-end;
+
+background:linear-gradient(135deg,#34d399,#10b981);
+
+color:white;
+
+}
+
+/* Expert message */
+
+.message.expert{
+
+align-self:flex-start;
+
+background:linear-gradient(135deg,#fda4af,#fb7185);
+
+color:white;
+
+}
+
+/* Typing */
+
+.typing{
+font-style:italic;
+opacity:0.8;
+}
+
+/* Time */
+
+.time{
+
+font-size:11px;
+opacity:0.7;
+
+margin-top:3px;
+
+}
+
+/* File preview */
+
+.file-preview{
+
+margin-top:5px;
+
+max-width:200px;
+
+border-radius:8px;
+
+}
+
+/* Input area */
+
+.chat-input{
+
+display:flex;
+
+padding:10px;
+
+border-top:1px solid rgba(255,255,255,0.2);
+
+background:rgba(255,255,255,0.1);
+
+}
+
+.chat-input input{
+
+flex:1;
+
+padding:10px;
+
+border-radius:20px;
+
+border:none;
+
+outline:none;
+
+}
+
+/* Buttons */
+
+.chat-input button{
+
+margin-left:6px;
+
+border:none;
+
+background:#2563eb;
+
+color:white;
+
+padding:10px 15px;
+
+border-radius:20px;
+
+cursor:pointer;
+
+}
+
+.chat-input button:hover{
+
+background:#1d4ed8;
+
+}
+
+.clear-btn{
+
+background:#ef4444;
+
+}
+
+#fileUpload{
+display:none;
+}
+
+.call-status{
+
+text-align:center;
+
+font-size:13px;
+
+padding:8px;
+
+background:rgba(255,255,255,0.15);
+
+color:white;
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="chat-container">
+
+<div class="chat-header">
+
+<span>AskExpert Chat</span>
+
+<button class="clear-btn" onclick="clearChat()">Clear</button>
+
+</div>
+
+<div id="chatMessages" class="chat-messages"></div>
+
+<div id="callStatus" class="call-status"></div>
+
+<div class="chat-input">
+
+<input id="messageInput" type="text" placeholder="Type message...">
+
+<button onclick="sendMessage()">Send</button>
+
+<button onclick="startMic()">🎤</button>
+
+<button onclick="document.getElementById('fileUpload').click()">📎</button>
+
+<input type="file" id="fileUpload" onchange="sendFile()">
+
+</div>
+
+</div>
+
+<script>
+
+/* SAFE STORAGE */
+
+function getData(key){
+try{
+return JSON.parse(localStorage.getItem(key)) || [];
+}catch(e){
+return [];
+}
+}
+
+/* XSS PROTECTION */
+
+function safe(text){
+if(!text) return "";
+return text.toString()
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+}
+
+/* LOAD CHAT */
+
+function loadChat(){
+
+let messages=getData("chatMessages");
+
+let chatBox=document.getElementById("chatMessages");
+
+chatBox.innerHTML="";
+
+let userImg="https://cdn-icons-png.flaticon.com/512/219/219969.png";
+let expertImg="https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
+
+messages.forEach(m=>{
+
+let div=document.createElement("div");
+div.className="message "+m.sender;
+
+let avatar=document.createElement("img");
+avatar.src=m.sender==="user"?userImg:expertImg;
+
+let content=document.createElement("div");
+
+let text=document.createElement("div");
+text.innerHTML=safe(m.text);
+
+content.appendChild(text);
+
+/* File preview */
+
+if(m.file){
+
+if(m.fileType.startsWith("image")){
+
+let img=document.createElement("img");
+img.src=m.file;
+img.className="file-preview";
+
+content.appendChild(img);
+
+}else{
+
+let link=document.createElement("a");
+link.href=m.file;
+link.innerText="📄 Download file";
+link.target="_blank";
+
+content.appendChild(link);
+
+}
+
+}
+
+let time=document.createElement("div");
+time.className="time";
+time.innerText=m.time;
+
+content.appendChild(time);
+
+div.appendChild(avatar);
+div.appendChild(content);
+
+chatBox.appendChild(div);
+
+});
+
+chatBox.scrollTop=chatBox.scrollHeight;
+
+}
+
+/* SEND MESSAGE */
+
+function sendMessage(){
+
+let input=document.getElementById("messageInput");
+
+let msg=input.value.trim();
+
+if(msg.length<1) return;
+
+let messages=getData("chatMessages");
+
+messages.push({
+
+text:safe(msg),
+sender:"user",
+time:new Date().toLocaleTimeString()
+
+});
+
+localStorage.setItem("chatMessages",JSON.stringify(messages));
+
+input.value="";
+
+loadChat();
+
+/* typing animation */
+
+showTyping(msg);
+
+}
+
+/* typing animation */
+
+function showTyping(userMsg){
+
+let chatBox=document.getElementById("chatMessages");
+
+let typing=document.createElement("div");
+typing.className="message expert typing";
+typing.innerText="Expert is typing...";
+
+chatBox.appendChild(typing);
+
+chatBox.scrollTop=chatBox.scrollHeight;
+
+setTimeout(()=>{
+
+typing.remove();
+expertReply(userMsg);
+
+},1500);
+
+}
+
+/* FILE UPLOAD */
+
+function sendFile(){
+
+let fileInput=document.getElementById("fileUpload");
+
+let file=fileInput.files[0];
+
+if(!file) return;
+
+/* size limit */
+
+if(file.size>5000000){
+alert("File too large (Max 5MB)");
+return;
+}
+
+/* allowed types */
+
+const allowed=[
+"image/",
+"application/pdf",
+"application/msword",
+"application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+];
+
+if(!allowed.some(type=>file.type.startsWith(type))){
+alert("File type not allowed");
+return;
+}
+
+let reader=new FileReader();
+
+reader.onload=function(e){
+
+let messages=getData("chatMessages");
+
+messages.push({
+
+text:"File shared",
+file:e.target.result,
+fileType:file.type,
+sender:"user",
+time:new Date().toLocaleTimeString()
+
+});
+
+localStorage.setItem("chatMessages",JSON.stringify(messages));
+
+loadChat();
+
+}
+
+reader.readAsDataURL(file);
+
+}
+
+/* EXPERT AUTO REPLY */
+
+function expertReply(text){
+
+let reply="Please explain more.";
+
+if(text.toLowerCase().includes("laptop"))
+reply="Check your laptop battery or charger.";
+
+let messages=getData("chatMessages");
+
+messages.push({
+
+text:reply,
+sender:"expert",
+time:new Date().toLocaleTimeString()
+
+});
+
+localStorage.setItem("chatMessages",JSON.stringify(messages));
+
+loadChat();
+
+}
+
+/* VOICE INPUT */
+
+function startMic(){
+
+const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+
+if(!SpeechRecognition){
+alert("Speech recognition not supported");
+return;
+}
+
+const recognition=new SpeechRecognition();
+
+recognition.lang="en-IN";
+
+recognition.start();
+
+recognition.onresult=(event)=>{
+
+let text=event.results[0][0].transcript;
+
+if(text){
+document.getElementById("messageInput").value=text;
+}
+
+};
+
+}
+
+/* ENTER KEY SEND */
+
+document.getElementById("messageInput").addEventListener("keypress",function(e){
+if(e.key==="Enter"){
+sendMessage();
+}
+});
+
+/* CLEAR CHAT */
+
+function clearChat(){
+
+if(confirm("Clear chat history?")){
+
+localStorage.removeItem("chatMessages");
+
+loadChat();
+
+}
+
+}
+
+/* INIT */
+
+loadChat();
+
+</script>
+
+</body>
+</html>
