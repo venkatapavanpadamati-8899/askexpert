@@ -171,8 +171,7 @@ margin-top:5px;
 
 function getData(key){
 try{
-let data = JSON.parse(localStorage.getItem(key));
-return data;
+return JSON.parse(localStorage.getItem(key));
 }catch(e){
 return null;
 }
@@ -192,7 +191,7 @@ let data = getData(key);
 return (data && typeof data==="object") ? data : {};
 }
 
-/* XSS SAFE */
+/* FULL XSS PROTECTION */
 
 function safe(text){
 if(!text) return "";
@@ -206,16 +205,24 @@ return text.toString()
 
 /* LOGIN CHECK */
 
+window.onload=function(){
+
 let user = getData("loggedInUser");
 
 if(!user){
 alert("Please login first");
 window.location.href="login.html";
+return;
 }
 
-if(user && user.banned){
+if(user.banned){
 alert("Your account is banned");
 window.location.href="login.html";
+return;
+}
+
+loadQuestions();
+
 }
 
 /* LOAD QUESTIONS */
@@ -268,17 +275,28 @@ ${q.notes ? `<p><b>Notes:</b> ${notes}</p>` : ""}
 
 <p><b>Rate this expert:</b></p>
 
-<button onclick="rateExpert('${profession}',5)">⭐5</button>
-<button onclick="rateExpert('${profession}',4)">⭐4</button>
-<button onclick="rateExpert('${profession}',3)">⭐3</button>
-<button onclick="rateExpert('${profession}',2)">⭐2</button>
-<button onclick="rateExpert('${profession}',1)">⭐1</button>
+<button onclick="rateExpert('${q.profession}',5)">⭐5</button>
+<button onclick="rateExpert('${q.profession}',4)">⭐4</button>
+<button onclick="rateExpert('${q.profession}',3)">⭐3</button>
+<button onclick="rateExpert('${q.profession}',2)">⭐2</button>
+<button onclick="rateExpert('${q.profession}',1)">⭐1</button>
 
 </div>
 
 `;
 
 container.appendChild(div);
+
+/* ENTER KEY SUBMIT */
+
+let textarea=document.getElementById("answer_"+q.id);
+
+textarea.addEventListener("keypress",function(e){
+if(e.key==="Enter" && !e.shiftKey){
+e.preventDefault();
+submitAnswer(q.id);
+}
+});
 
 });
 
@@ -304,7 +322,9 @@ alert("Question not found");
 return;
 }
 
-questions[index].answer=text;
+/* sanitize answer before saving */
+
+questions[index].answer=safe(text);
 
 localStorage.setItem("questions",JSON.stringify(questions));
 
@@ -320,6 +340,15 @@ function rateExpert(expert,stars){
 
 let ratings=getObject("expertRatings");
 
+/* prevent rating spam */
+
+let rated = localStorage.getItem("rated_"+expert);
+
+if(rated){
+alert("You already rated this expert");
+return;
+}
+
 if(!ratings[expert]){
 ratings[expert]={total:0,count:0};
 }
@@ -329,6 +358,8 @@ ratings[expert].count += 1;
 
 localStorage.setItem("expertRatings",JSON.stringify(ratings));
 
+localStorage.setItem("rated_"+expert,true);
+
 let avg = ratings[expert].count
 ? (ratings[expert].total/ratings[expert].count).toFixed(1)
 : "0";
@@ -336,10 +367,6 @@ let avg = ratings[expert].count
 alert("Thanks! "+expert+" rating: ⭐ "+avg);
 
 }
-
-/* INIT */
-
-loadQuestions();
 
 </script>
 
