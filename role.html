@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AskExpert - Professional Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+
+*{box-sizing:border-box;}
+
+body{
+font-family:Segoe UI, Arial;
+margin:0;
+padding:40px;
+
+background:
+linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.7)),
+url("https://images.unsplash.com/photo-1522202176988-66273c2fd55f");
+
+background-size:cover;
+background-position:center;
+}
+
+/* CONTAINER */
+
+.container{
+max-width:900px;
+margin:auto;
+
+background:rgba(255,255,255,0.95);
+
+padding:30px;
+
+border-radius:20px;
+
+box-shadow:0 15px 40px rgba(0,0,0,0.3);
+
+animation:fadeIn .8s ease;
+}
+
+@keyframes fadeIn{
+from{opacity:0;transform:translateY(-20px);}
+to{opacity:1;transform:translateY(0);}
+}
+
+/* HEADER */
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+}
+
+.header h2{
+margin:0;
+color:#333;
+}
+
+.logout-btn{
+background:#dc3545;
+color:white;
+border:none;
+padding:8px 15px;
+border-radius:6px;
+cursor:pointer;
+}
+
+.logout-btn:hover{
+background:#c82333;
+}
+
+/* QUESTION CARD */
+
+.question-box{
+background:white;
+padding:20px;
+margin-bottom:20px;
+border-radius:12px;
+box-shadow:0 8px 20px rgba(0,0,0,0.1);
+transition:.3s;
+}
+
+.question-box:hover{
+transform:translateY(-5px);
+box-shadow:0 15px 30px rgba(0,0,0,0.2);
+}
+
+.answer{
+margin-top:10px;
+padding:10px;
+background:#f4f4f4;
+border-radius:6px;
+}
+
+textarea{
+width:100%;
+height:80px;
+margin-top:10px;
+padding:10px;
+border-radius:6px;
+border:1px solid #ccc;
+resize:none;
+font-family:inherit;
+}
+
+button{
+margin-top:10px;
+padding:10px 15px;
+background:#28a745;
+border:none;
+color:white;
+border-radius:6px;
+cursor:pointer;
+transition:.3s;
+}
+
+button:hover{
+background:#218838;
+transform:scale(1.05);
+}
+
+.timestamp{
+font-size:12px;
+color:gray;
+margin-top:5px;
+}
+
+.empty{
+text-align:center;
+font-size:18px;
+color:#555;
+margin-top:40px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+<h2>Professional Dashboard</h2>
+<button class="logout-btn" onclick="logout()">Logout</button>
+</div>
+
+<div id="questionsList"></div>
+
+</div>
+
+<script>
+
+/* SAFE JSON */
+
+function getData(key){
+try{
+return JSON.parse(localStorage.getItem(key));
+}catch(e){
+return null;
+}
+}
+
+/* SAFE ARRAY */
+
+function getArray(key){
+let data=getData(key);
+return Array.isArray(data)?data:[];
+}
+
+/* XSS PROTECTION */
+
+function safe(text){
+if(!text) return "";
+return text.toString()
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#39;");
+}
+
+/* PAGE LOAD CHECK */
+
+window.onload=function(){
+
+let user=getData("loggedInUser");
+
+/* LOGIN CHECK */
+
+if(!user){
+alert("Please login first");
+window.location.href="login.html";
+return;
+}
+
+/* ROLE CHECK */
+
+if(!user.role || user.role.toLowerCase()!=="expert"){
+alert("Only experts can access this dashboard");
+window.location.href="index.html";
+return;
+}
+
+loadQuestions();
+
+}
+
+/* LOAD QUESTIONS */
+
+function loadQuestions(){
+
+let user=getData("loggedInUser");
+
+let questions=getArray("questions");
+
+let container=document.getElementById("questionsList");
+
+container.innerHTML="";
+
+if(questions.length===0){
+
+container.innerHTML="<p class='empty'>No questions yet.</p>";
+
+return;
+
+}
+
+let hasQuestions=false;
+
+questions.forEach(q=>{
+
+if(!q.profession) return;
+
+if(q.profession.toLowerCase() !== (user.profession || "").toLowerCase())
+return;
+
+hasQuestions=true;
+
+let div=document.createElement("div");
+
+div.className="question-box";
+
+div.innerHTML=`
+
+<p><b>Question:</b> ${safe(q.question)}</p>
+
+<p><b>Expert Needed:</b> ${safe(q.profession)}</p>
+
+<p class="timestamp">Asked on: ${safe(q.timestamp || "N/A")}</p>
+
+<div class="answer">
+<b>Answer:</b> ${safe(q.answer || "No answer yet")}
+</div>
+
+<textarea id="answer_${q.id}" placeholder="Write your answer...">${safe(q.answer || "")}</textarea>
+
+<button onclick="submitAnswer('${q.id}')">
+Submit Answer
+</button>
+
+`;
+
+container.appendChild(div);
+
+/* ENTER KEY SUBMIT */
+
+let box=document.getElementById("answer_"+q.id);
+
+box.addEventListener("keypress",function(e){
+
+if(e.key==="Enter" && !e.shiftKey){
+e.preventDefault();
+submitAnswer(q.id);
+}
+
+});
+
+});
+
+if(!hasQuestions){
+container.innerHTML="<p class='empty'>No questions available for your expertise.</p>";
+}
+
+}
+
+/* SUBMIT ANSWER */
+
+function submitAnswer(id){
+
+let questions=getArray("questions");
+
+let textarea=document.getElementById("answer_"+id);
+
+let text=textarea.value.trim();
+
+if(text===""){
+alert("Write answer first");
+return;
+}
+
+let index=questions.findIndex(q=>String(q.id)===String(id));
+
+if(index===-1){
+alert("Question not found");
+return;
+}
+
+/* SAVE SAFE ANSWER */
+
+questions[index].answer=safe(text);
+
+localStorage.setItem("questions",JSON.stringify(questions));
+
+alert("Answer submitted successfully!");
+
+loadQuestions();
+
+}
+
+/* LOGOUT */
+
+function logout(){
+
+localStorage.removeItem("loggedInUser");
+
+window.location.href="login.html";
+
+}
+
+</script>
+
+</body>
+</html>
