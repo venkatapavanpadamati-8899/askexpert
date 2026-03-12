@@ -1,245 +1,240 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Login - AskExpert</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet"> 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-/* Global Reset */
+
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Poppins',sans-serif;}
 
-/* Body + Animated Background */
 body{
-  height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  background: linear-gradient(rgba(0,0,0,0.45),rgba(0,0,0,0.55)), url("https://images.unsplash.com/photo-1556761175-4b46a572b786") center/cover no-repeat;
-  background-size:cover;
-  animation:bgMove 15s infinite alternate;
-  overflow:hidden;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background: linear-gradient(rgba(0,0,0,0.45),rgba(0,0,0,0.55)),
+url("https://images.unsplash.com/photo-1556761175-4b46a572b786") center/cover no-repeat;
+animation:bgMove 15s infinite alternate;
+overflow:hidden;
 }
 
 @keyframes bgMove{
-  0%{transform:scale(1);}
-  100%{transform:scale(1.08);}
+0%{transform:scale(1);}
+100%{transform:scale(1.08);}
 }
 
-/* Glassmorphism Login Card */
 .login-box{
-  width:380px;
-  padding:40px;
-  border-radius:20px;
-  background:rgba(255,255,255,0.15);
-  backdrop-filter:blur(18px);
-  border:1px solid rgba(255,255,255,0.2);
-  box-shadow:0 20px 60px rgba(0,0,0,0.4);
-  color:white;
-  text-align:center;
-  animation:floatCard 6s ease-in-out infinite, fadeIn 1s ease forwards;
+width:380px;
+padding:40px;
+border-radius:20px;
+background:rgba(255,255,255,0.15);
+backdrop-filter:blur(18px);
+border:1px solid rgba(255,255,255,0.2);
+box-shadow:0 20px 60px rgba(0,0,0,0.4);
+color:white;
+text-align:center;
+animation:floatCard 6s ease-in-out infinite;
 }
 
 @keyframes floatCard{
-  0%{transform:translateY(0);}
-  50%{transform:translateY(-8px);}
-  100%{transform:translateY(0);}
+0%{transform:translateY(0);}
+50%{transform:translateY(-8px);}
+100%{transform:translateY(0);}
 }
 
-@keyframes fadeIn{
-  from{opacity:0; transform:translateY(-20px);}
-  to{opacity:1; transform:translateY(0);}
-}
-
-/* Logo */
 .logo{
-  font-size:36px;
-  font-weight:600;
-  margin-bottom:10px;
+font-size:36px;
+font-weight:600;
+margin-bottom:10px;
 }
+
 .logo i{
-  color:#ffd54f;
-  margin-right:8px;
+color:#ffd54f;
+margin-right:8px;
 }
+
 .ask{color:white;}
 .expert{color:#ffd54f;}
 
-/* Subtitle */
 .subtitle{
-  font-size:16px;
-  opacity:.85;
-  margin-bottom:30px;
+font-size:16px;
+opacity:.85;
+margin-bottom:30px;
 }
 
-/* Input Groups */
 .input-group{
-  position:relative;
-  margin:15px 0;
+position:relative;
+margin:15px 0;
 }
+
 .input-group i{
-  position:absolute;
-  left:12px;
-  top:50%;
-  transform:translateY(-50%);
-  color:#eee;
+position:absolute;
+left:12px;
+top:50%;
+transform:translateY(-50%);
+color:#eee;
 }
+
 input{
-  width:100%;
-  padding:12px 12px 12px 40px;
-  border-radius:10px;
-  border:none;
-  background:rgba(255,255,255,0.2);
-  color:white;
-  outline:none;
-  font-size:15px;
-  transition:0.3s;
+width:100%;
+padding:12px 12px 12px 40px;
+border-radius:10px;
+border:none;
+background:rgba(255,255,255,0.2);
+color:white;
+outline:none;
+font-size:15px;
 }
-input:focus{
-  background:rgba(255,255,255,0.3);
-  box-shadow:0 0 10px rgba(255,255,255,0.3);
-}
+
 input::placeholder{color:#ddd;}
 
-/* Buttons */
 button{
-  width:100%;
-  padding:14px;
-  border-radius:10px;
-  border:none;
-  font-size:16px;
-  cursor:pointer;
-  background:linear-gradient(45deg,#00c6ff,#0072ff);
-  transition:0.3s;
-}
-button:hover{
-  transform:scale(1.05);
-  box-shadow:0 10px 25px rgba(0,0,0,0.4);
+width:100%;
+padding:14px;
+border-radius:10px;
+border:none;
+font-size:16px;
+cursor:pointer;
+background:linear-gradient(45deg,#00c6ff,#0072ff);
+transition:0.3s;
 }
 
-/* Navigation Buttons */
+button:hover{
+transform:scale(1.05);
+}
+
 .navigation{
-  display:flex;
-  gap:12px;
-  margin-top:20px;
+display:flex;
+gap:12px;
+margin-top:20px;
 }
+
 .navigation button{
-  flex:1;
-  font-size:14px;
-  padding:10px;
-  border-radius:10px;
-  box-shadow:0 6px 20px rgba(0,0,0,0.35);
+flex:1;
+font-size:14px;
+padding:10px;
 }
+
 .register{background:linear-gradient(45deg,#4caf50,#388e3c);}
 .ask-btn{background:linear-gradient(45deg,#ff9800,#f57c00);}
 
-/* Responsive */
-@media(max-width:450px){
-  .login-box{width:90%; padding:35px;}
-  .logo{font-size:30px;}
-  .subtitle{font-size:14px; margin-bottom:20px;}
-  input{font-size:14px;}
-  button{font-size:15px;}
-}
 </style>
 </head>
 
 <body>
+
 <div class="login-box">
 
-  <div class="logo">
-    <i class="fa-solid fa-user-doctor"></i>
-    <span class="ask">Ask</span><span class="expert">Expert</span>
-  </div>
-  <p class="subtitle">Ask questions from verified professionals</p>
-
-  <form onsubmit="return loginUser()">
-    <div class="input-group">
-      <i class="fa fa-envelope"></i>
-      <input id="email" type="email" placeholder="Email Address" required>
-    </div>
-    <div class="input-group">
-      <i class="fa fa-lock"></i>
-      <input id="password" type="password" placeholder="Password" required>
-    </div>
-    <button id="loginBtn" type="submit">Login</button>
-  </form>
-
-  <div class="navigation">
-    <button class="register" onclick="location.href='register.html'">Register</button>
-    <button class="ask-btn" onclick="location.href='ask.html'">Ask Question</button>
-  </div>
+<div class="logo">
+<i class="fa-solid fa-user-doctor"></i>
+<span class="ask">Ask</span><span class="expert">Expert</span>
 </div>
 
-<!-- FIREBASE -->
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<p class="subtitle">Ask questions from verified professionals</p>
+
+<form onsubmit="return loginUser()">
+
+<div class="input-group">
+<i class="fa fa-envelope"></i>
+<input id="email" type="email" placeholder="Email Address" required>
+</div>
+
+<div class="input-group">
+<i class="fa fa-lock"></i>
+<input id="password" type="password" placeholder="Password" required>
+</div>
+
+<button id="loginBtn" type="submit">Login</button>
+
+</form>
+
+<div class="navigation">
+<button class="register" onclick="location.href='register.html'">Register</button>
+<button class="ask-btn" onclick="location.href='ask.html'">Ask Question</button>
+</div>
+
+</div>
 
 <script>
-const firebaseConfig = {
-  apiKey:"AIzaSyDEzJ2LOdgNU6SCMLGHqa0C0hsjQVeOYO8",
-  authDomain:"askexpert-b642b.firebaseapp.com",
-  projectId:"askexpert-b642b",
-  storageBucket:"askexpert-b642b.appspot.com",
-  messagingSenderId:"407440869696",
-  appId:"1:407440869696:web:504234dd881a7e875dd2a5"
-};
-if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
-const auth = firebase.auth();
-const db = firebase.firestore();
 
-async function loginUser(){
-    let email = document.getElementById("email").value.trim().toLowerCase();
-    let password = document.getElementById("password").value.trim();
-    let btn = document.getElementById("loginBtn");
+/* LOGIN USING LOCAL STORAGE */
 
-    if(!email || !password){
-        alert("Please enter both email and password");
-        return false;
-    }
-    btn.disabled = true;
-    btn.innerText = "Logging in...";
+function loginUser(){
 
-    try{
-        let userCredential = await auth.signInWithEmailAndPassword(email,password);
-        let uid = userCredential.user.uid;
+let email = document.getElementById("email").value.trim().toLowerCase();
+let password = document.getElementById("password").value.trim();
+let btn = document.getElementById("loginBtn");
 
-        let querySnapshot = await db.collection("users").where("email","==",email).get();
-        if(querySnapshot.empty){
-            alert("User profile not found in database");
-            await auth.signOut();
-            btn.disabled=false;
-            btn.innerText="Login";
-            return false;
-        }
-
-        let userData = querySnapshot.docs[0].data();
-        if(userData.banned === true){
-            alert("Your account has been banned");
-            await auth.signOut();
-            btn.disabled=false;
-            btn.innerText="Login";
-            return false;
-        }
-
-        localStorage.setItem("user", JSON.stringify(userData));
-        localStorage.setItem("uid", uid);
-
-        alert("Login successful");
-        window.location.href="dashboard.html";
-    } catch(error){
-        console.error(error);
-        if(error.code === "auth/user-not-found") alert("User not found");
-        else if(error.code === "auth/wrong-password") alert("Incorrect password");
-        else if(error.code === "auth/invalid-email") alert("Invalid email format");
-        else alert(error.message);
-        btn.disabled=false;
-        btn.innerText="Login";
-    }
-    return false;
+if(!email || !password){
+alert("Please enter both email and password");
+return false;
 }
+
+btn.disabled = true;
+btn.innerText = "Logging in...";
+
+/* GET USERS */
+
+let users = JSON.parse(localStorage.getItem("users")) || [];
+
+/* FIND USER */
+
+let user = users.find(u => u.email === email && u.password === password);
+
+if(!user){
+
+alert("Invalid email or password");
+
+btn.disabled=false;
+btn.innerText="Login";
+
+return false;
+
+}
+
+/* CHECK BAN */
+
+if(user.banned === true){
+
+alert("Your account has been banned");
+
+btn.disabled=false;
+btn.innerText="Login";
+
+return false;
+
+}
+
+/* SAVE SESSION */
+
+localStorage.setItem("loggedInUser", JSON.stringify(user));
+
+alert("Login successful");
+
+/* REDIRECT BASED ON ROLE */
+
+if(user.role === "expert"){
+
+window.location.href = "expert-dashboard.html";
+
+}else{
+
+window.location.href = "ask.html";
+
+}
+
+return false;
+
+}
+
 </script>
+
 </body>
 </html>
+
