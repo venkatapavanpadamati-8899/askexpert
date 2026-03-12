@@ -21,11 +21,9 @@ font-family:Segoe UI,Arial;
 }
 
 body{
-
 background:
 linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)),
 url("https://images.unsplash.com/photo-1518770660439-4636190af475");
-
 background-size:cover;
 background-position:center;
 background-attachment:fixed;
@@ -35,24 +33,17 @@ display:flex;
 justify-content:center;
 align-items:center;
 padding:30px;
-
 color:white;
 }
 
 .ask-box{
-
 background:rgba(255,255,255,0.12);
 backdrop-filter:blur(18px);
-
 padding:40px;
 width:520px;
-
 border-radius:20px;
-
 border:1px solid rgba(255,255,255,0.25);
-
 box-shadow:0 25px 60px rgba(0,0,0,.35);
-
 }
 
 h2{
@@ -68,11 +59,16 @@ border-radius:10px;
 border:none;
 margin-bottom:15px;
 font-size:14px;
-
 background:rgba(255,255,255,0.2);
 color:white;
-
 outline:none;
+}
+
+/* FIX DROPDOWN TEXT VISIBILITY */
+
+select option{
+background:#203a43;
+color:white;
 }
 
 textarea{
@@ -93,7 +89,6 @@ border-radius:10px;
 font-size:15px;
 cursor:pointer;
 margin-top:10px;
-
 font-weight:600;
 }
 
@@ -198,28 +193,7 @@ onclick="submitQuestion()">
 
 </div>
 
-
-<!-- FIREBASE -->
-
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-
 <script>
-
-const firebaseConfig={
-apiKey:"AIzaSyDEzJ2LOdgNU6SCMLGHqa0C0hsjQVeOYO8",
-authDomain:"askexpert-b642b.firebaseapp.com",
-projectId:"askexpert-b642b",
-storageBucket:"askexpert-b642b.appspot.com",
-messagingSenderId:"407440869696",
-appId:"1:407440869696:web:504234dd881a7e875dd2a5"
-};
-
-if(!firebase.apps.length){
-firebase.initializeApp(firebaseConfig);
-}
-
-const db=firebase.firestore();
 
 /* SAFE TEXT */
 
@@ -250,17 +224,16 @@ return false;
 
 /* LOGIN CHECK */
 
-let uid = localStorage.getItem("uid");
-let user = JSON.parse(localStorage.getItem("user") || "{}");
+let user = JSON.parse(localStorage.getItem("loggedInUser"));
 
-if(!uid){
+if(!user){
 alert("Please login first");
 window.location.href="login.html";
 }
 
 /* SUBMIT QUESTION */
 
-async function submitQuestion(){
+function submitQuestion(){
 
 let question=document.getElementById("question").value.trim();
 let profession=document.getElementById("professionSelect").value;
@@ -293,37 +266,39 @@ error.style.color="red";
 return;
 }
 
-try{
+/* LOAD QUESTIONS */
 
-await db.collection("questions").add({
+let questions = JSON.parse(localStorage.getItem("questions")) || [];
 
-userId:uid,
-askedBy:user.name || "anonymous",
-question:safe(question),
-profession:profession,
-notes:safe(notes),
-language:language,
+let newQuestion = {
+
+id: Date.now(),
+
+userId: user.id,
+askedBy: user.name || "anonymous",
+
+question: safe(question),
+profession: profession,
+notes: safe(notes),
+language: language,
 
 status:"pending",
 answer:"",
 views:0,
 
-createdAt:new Date()
+createdAt:new Date().toLocaleString()
 
-});
+};
+
+questions.push(newQuestion);
+
+localStorage.setItem("questions", JSON.stringify(questions));
 
 error.style.color="lightgreen";
 error.innerText="Question submitted successfully";
 
 document.getElementById("question").value="";
 document.getElementById("notes").value="";
-
-}catch(e){
-
-console.error(e);
-error.innerText="Error submitting question";
-
-}
 
 }
 
@@ -384,4 +359,3 @@ document.getElementById("question").value=voiceText;
 
 </body>
 </html>
-
