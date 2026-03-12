@@ -1,4 +1,4 @@
-
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,8 +20,6 @@ padding:0;
 font-family:Segoe UI,Arial;
 }
 
-/* MODERN BACKGROUND */
-
 body{
 
 background:
@@ -41,37 +39,6 @@ padding:30px;
 color:white;
 }
 
-/* FLOATING SHAPES */
-
-.bg-shapes::before,
-.bg-shapes::after{
-content:"";
-position:absolute;
-width:320px;
-height:320px;
-border-radius:50%;
-background:rgba(255,255,255,0.15);
-filter:blur(90px);
-animation:move 10s infinite alternate;
-}
-
-.bg-shapes::before{
-top:5%;
-left:8%;
-}
-
-.bg-shapes::after{
-bottom:5%;
-right:8%;
-}
-
-@keyframes move{
-from{transform:translateY(0)}
-to{transform:translateY(50px)}
-}
-
-/* GLASS CARD */
-
 .ask-box{
 
 background:rgba(255,255,255,0.12);
@@ -86,32 +53,13 @@ border:1px solid rgba(255,255,255,0.25);
 
 box-shadow:0 25px 60px rgba(0,0,0,.35);
 
-animation:floatCard 6s ease-in-out infinite;
-
-transition:0.4s;
 }
-
-.ask-box:hover{
-transform:translateY(-5px) scale(1.02);
-box-shadow:0 30px 70px rgba(0,0,0,.5);
-}
-
-@keyframes floatCard{
-0%{transform:translateY(0);}
-50%{transform:translateY(-8px);}
-100%{transform:translateY(0);}
-}
-
-/* TITLE */
 
 h2{
 text-align:center;
 margin-bottom:20px;
 font-size:28px;
-letter-spacing:1px;
 }
-
-/* INPUTS */
 
 textarea,select,input{
 width:100%;
@@ -125,7 +73,6 @@ background:rgba(255,255,255,0.2);
 color:white;
 
 outline:none;
-transition:0.3s;
 }
 
 textarea{
@@ -138,14 +85,6 @@ input::placeholder{
 color:#eee;
 }
 
-textarea:focus,
-input:focus,
-select:focus{
-background:rgba(255,255,255,0.3);
-}
-
-/* BUTTONS */
-
 button{
 width:100%;
 padding:13px;
@@ -156,12 +95,7 @@ cursor:pointer;
 margin-top:10px;
 
 font-weight:600;
-letter-spacing:0.5px;
-
-transition:0.3s;
 }
-
-/* BUTTON COLORS */
 
 .voice-btn{
 background:linear-gradient(45deg,#ff5722,#ff9800);
@@ -178,20 +112,11 @@ background:linear-gradient(45deg,#00c853,#4caf50);
 color:white;
 }
 
-button:hover{
-transform:translateY(-2px) scale(1.02);
-box-shadow:0 8px 20px rgba(0,0,0,0.3);
-}
-
-/* ERROR MESSAGE */
-
 #errorMsg{
 text-align:center;
 margin-bottom:12px;
 font-weight:bold;
 }
-
-/* HOME LINK */
 
 .home-link{
 text-align:center;
@@ -205,223 +130,9 @@ text-decoration:none;
 
 </style>
 
-<script>
-
-/* SAFE JSON */
-
-function getData(key){
-try{
-return JSON.parse(localStorage.getItem(key)) || null;
-}catch(e){
-return null;
-}
-}
-
-/* XSS PROTECTION */
-
-function safe(text){
-if(!text) return "";
-return text.toString()
-.replace(/&/g,"&amp;")
-.replace(/</g,"&lt;")
-.replace(/>/g,"&gt;")
-.replace(/"/g,"&quot;")
-.replace(/'/g,"&#039;");
-}
-
-/* LOGIN CHECK */
-
-window.onload=function(){
-
-let user=getData("loggedInUser");
-
-if(!user){
-alert("Please login first");
-window.location.replace("login.html");
-return;
-}
-
-if(user.banned){
-alert("Your account is banned");
-window.location.replace("login.html");
-}
-
-}
-
-/* SPAM DETECTION */
-
-function detectSpam(text){
-
-text=text.toLowerCase();
-
-if(
-text.includes("test") ||
-text.includes("asdf") ||
-text.includes("qwerty") ||
-text.includes("dummy")
-) return true;
-
-if(/(.)\1{5,}/.test(text)) return true;
-
-return false;
-
-}
-
-/* SUBMIT QUESTION */
-
-function submitQuestion(){
-
-let user=getData("loggedInUser");
-
-let question=document.getElementById("question").value.trim();
-let profession=document.getElementById("professionSelect").value;
-let notes=document.getElementById("notes").value.trim();
-let language=document.getElementById("language").value;
-
-let error=document.getElementById("errorMsg");
-
-if(question===""){
-error.innerText="Please write your question";
-error.style.color="red";
-return;
-}
-
-if(question.length<10){
-error.innerText="Question must be at least 10 characters";
-error.style.color="red";
-return;
-}
-
-if(detectSpam(question)){
-error.innerText="Spam or low quality question detected";
-error.style.color="red";
-return;
-}
-
-if(profession===""){
-error.innerText="Please select expert";
-error.style.color="red";
-return;
-}
-
-let questions=getData("questions") || [];
-
-let newQuestion={
-
-id:Date.now(),
-
-question:safe(question),
-
-profession:profession,
-
-notes:safe(notes),
-
-askedBy:safe(user.name),
-
-language:language,
-
-timestamp:new Date().toLocaleString(),
-
-answer:"",
-
-status:"pending",
-
-views:0
-
-};
-
-questions.push(newQuestion);
-
-localStorage.setItem("questions",JSON.stringify(questions));
-
-error.style.color="lightgreen";
-error.innerText="Question submitted successfully!";
-
-document.getElementById("question").value="";
-document.getElementById("notes").value="";
-document.getElementById("professionSelect").value="";
-document.getElementById("language").value="English";
-
-}
-
-/* AI EXPERT DETECTION */
-
-function identifyExpert(){
-
-let text=document.getElementById("question").value.toLowerCase();
-
-if(!text) return;
-
-let profession="";
-
-if(text.includes("fever") || text.includes("medicine") || text.includes("pain") || text.includes("hospital"))
-profession="doctor";
-
-else if(text.includes("court") || text.includes("law") || text.includes("case"))
-profession="lawyer";
-
-else if(text.includes("software") || text.includes("computer") || text.includes("coding") || text.includes("app"))
-profession="engineer";
-
-else if(text.includes("exam") || text.includes("study") || text.includes("homework"))
-profession="teacher";
-
-else if(text.includes("crime") || text.includes("complaint"))
-profession="police";
-
-document.getElementById("professionSelect").value=profession;
-
-let error=document.getElementById("errorMsg");
-
-if(profession===""){
-error.innerText="AI could not detect expert";
-error.style.color="orange";
-}
-else{
-error.innerText="AI Suggests: "+profession;
-error.style.color="cyan";
-}
-
-}
-
-/* VOICE INPUT */
-
-function startVoice(){
-
-const SpeechRecognition=
-window.SpeechRecognition ||
-window.webkitSpeechRecognition;
-
-if(!SpeechRecognition){
-alert("Voice recognition not supported");
-return;
-}
-
-const recognition=new SpeechRecognition();
-
-recognition.lang="en-IN";
-
-recognition.start();
-
-recognition.onresult=function(event){
-
-let voiceText=event.results[0][0].transcript;
-
-if(voiceText){
-document.getElementById("question").value=voiceText;
-}
-
-};
-
-}
-
-</script>
-
 </head>
 
 <body>
-
-<div class="bg-shapes"></div>
 
 <div class="ask-box">
 
@@ -487,6 +198,190 @@ onclick="submitQuestion()">
 
 </div>
 
+
+<!-- FIREBASE -->
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+<script>
+
+const firebaseConfig={
+apiKey:"AIzaSyDEzJ2LOdgNU6SCMLGHqa0C0hsjQVeOYO8",
+authDomain:"askexpert-b642b.firebaseapp.com",
+projectId:"askexpert-b642b",
+storageBucket:"askexpert-b642b.appspot.com",
+messagingSenderId:"407440869696",
+appId:"1:407440869696:web:504234dd881a7e875dd2a5"
+};
+
+if(!firebase.apps.length){
+firebase.initializeApp(firebaseConfig);
+}
+
+const db=firebase.firestore();
+
+/* SAFE TEXT */
+
+function safe(text){
+return text
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;");
+}
+
+/* SPAM DETECTION */
+
+function detectSpam(text){
+
+text=text.toLowerCase();
+
+if(
+text.includes("asdf") ||
+text.includes("qwerty") ||
+text.includes("dummy")
+) return true;
+
+if(/(.)\1{5,}/.test(text)) return true;
+
+return false;
+
+}
+
+/* LOGIN CHECK */
+
+let uid = localStorage.getItem("uid");
+let user = JSON.parse(localStorage.getItem("user") || "{}");
+
+if(!uid){
+alert("Please login first");
+window.location.href="login.html";
+}
+
+/* SUBMIT QUESTION */
+
+async function submitQuestion(){
+
+let question=document.getElementById("question").value.trim();
+let profession=document.getElementById("professionSelect").value;
+let notes=document.getElementById("notes").value.trim();
+let language=document.getElementById("language").value;
+
+let error=document.getElementById("errorMsg");
+
+if(question===""){
+error.innerText="Please write your question";
+error.style.color="red";
+return;
+}
+
+if(question.length<10){
+error.innerText="Question must be at least 10 characters";
+error.style.color="red";
+return;
+}
+
+if(detectSpam(question)){
+error.innerText="Spam detected";
+error.style.color="red";
+return;
+}
+
+if(profession===""){
+error.innerText="Please select expert";
+error.style.color="red";
+return;
+}
+
+try{
+
+await db.collection("questions").add({
+
+userId:uid,
+askedBy:user.name || "anonymous",
+question:safe(question),
+profession:profession,
+notes:safe(notes),
+language:language,
+
+status:"pending",
+answer:"",
+views:0,
+
+createdAt:new Date()
+
+});
+
+error.style.color="lightgreen";
+error.innerText="Question submitted successfully";
+
+document.getElementById("question").value="";
+document.getElementById("notes").value="";
+
+}catch(e){
+
+console.error(e);
+error.innerText="Error submitting question";
+
+}
+
+}
+
+/* AI EXPERT DETECTION */
+
+function identifyExpert(){
+
+let text=document.getElementById("question").value.toLowerCase();
+
+let profession="";
+
+if(text.includes("fever") || text.includes("medicine"))
+profession="doctor";
+
+else if(text.includes("court") || text.includes("law"))
+profession="lawyer";
+
+else if(text.includes("coding") || text.includes("software"))
+profession="engineer";
+
+else if(text.includes("exam") || text.includes("study"))
+profession="teacher";
+
+document.getElementById("professionSelect").value=profession;
+
+}
+
+/* VOICE INPUT */
+
+function startVoice(){
+
+const SpeechRecognition=
+window.SpeechRecognition ||
+window.webkitSpeechRecognition;
+
+if(!SpeechRecognition){
+alert("Voice recognition not supported");
+return;
+}
+
+const recognition=new SpeechRecognition();
+
+recognition.lang="en-IN";
+
+recognition.start();
+
+recognition.onresult=function(event){
+
+let voiceText=event.results[0][0].transcript;
+
+document.getElementById("question").value=voiceText;
+
+};
+
+}
+
+</script>
+
 </body>
 </html>
-
+```
