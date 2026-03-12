@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Register - Ask Experts</title>
+<title>Register - AskExpert</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 
@@ -21,24 +21,18 @@ padding:0;
 font-family:'Poppins',sans-serif;
 }
 
-/* APP BACKGROUND */
-
 body{
-
 min-height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
 padding:20px;
-
 background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-
 }
 
-/* BACKGROUND IMAGE LAYER */
+/* background image */
 
 body:before{
-
 content:"";
 position:fixed;
 top:0;
@@ -53,13 +47,11 @@ background-position:center;
 
 opacity:.18;
 z-index:-1;
-
 }
 
-/* GLASS CARD */
+/* glass card */
 
 .register-box{
-
 width:420px;
 padding:40px 30px;
 border-radius:20px;
@@ -73,242 +65,123 @@ border:1px solid rgba(255,255,255,0.2);
 box-shadow:0 30px 80px rgba(0,0,0,0.45);
 
 color:white;
-
 text-align:center;
-
-animation:floatCard 6s ease-in-out infinite;
-
-}
-
-/* FLOAT ANIMATION */
-
-@keyframes floatCard{
-
-0%{transform:translateY(0);}
-50%{transform:translateY(-10px);}
-100%{transform:translateY(0);}
-
-}
-
-/* HEADER */
-
-.header-box{
-margin-bottom:25px;
 }
 
 .app-title{
-
 font-size:34px;
 font-weight:600;
-
 color:#4dd0e1;
-
 margin-bottom:5px;
-
 }
 
 .app-sub{
-
 font-size:14px;
 opacity:.8;
-
+margin-bottom:20px;
 }
 
-/* INPUT GROUP */
-
 .input-group{
-
 position:relative;
-margin:15px 0;
-
+margin:12px 0;
 }
 
 .input-group i{
-
 position:absolute;
-
 left:12px;
 top:50%;
-
 transform:translateY(-50%);
-
 color:#ddd;
-
 }
 
 input,select{
-
 width:100%;
-
 padding:12px 12px 12px 40px;
-
 border-radius:8px;
-
 border:none;
-
 background:rgba(255,255,255,0.2);
-
 color:white;
-
 font-size:14px;
-
 outline:none;
-
-transition:.3s;
-
 }
 
 input::placeholder{
 color:#eee;
 }
 
-input:focus,select:focus{
+/* expert section */
 
-background:rgba(255,255,255,0.35);
-
-box-shadow:0 0 10px rgba(255,255,255,0.4);
-
+#expertFields{
+display:none;
+margin-top:15px;
+padding:12px;
+border-radius:10px;
+background:rgba(255,255,255,0.08);
 }
 
-/* BUTTON */
+/* buttons */
 
 button{
-
 width:100%;
-
 padding:13px;
-
 border:none;
-
 border-radius:8px;
-
 margin-top:10px;
-
 font-size:15px;
-
 cursor:pointer;
-
-transition:0.3s;
-
 font-weight:500;
-
+transition:.3s;
 }
 
-/* SEND OTP */
-
-button:nth-of-type(1){
-
+.otp-btn{
 background:linear-gradient(45deg,#ff9800,#ff5722);
-color:white;
-
 }
 
-/* VERIFY OTP */
-
-button:nth-of-type(2){
-
+.verify-btn{
 background:linear-gradient(45deg,#00c853,#2e7d32);
-color:white;
-
 }
 
-/* REGISTER */
-
-button[type="submit"]{
-
+.register-btn{
 background:linear-gradient(45deg,#00c6ff,#0072ff);
-
-color:white;
-
 }
 
 button:hover{
-
 transform:scale(1.05);
-
-box-shadow:0 10px 25px rgba(0,0,0,0.4);
-
 }
 
-/* FILE */
-
-input[type=file]{
-
-background:rgba(255,255,255,0.2);
-
-padding:10px;
-
-}
-
-/* LABEL */
-
-label{
-
-display:block;
-
-margin-top:10px;
-
-font-size:13px;
-
-text-align:left;
-
-color:#eee;
-
-}
-
-/* NAV BUTTONS */
+/* navigation buttons */
 
 .navigation-buttons{
-
 display:flex;
-
 gap:10px;
-
 margin-top:20px;
-
 }
 
 .navigation-buttons button{
-
 width:33%;
-
 font-size:13px;
-
 }
 
-.register-btn{background:#4caf50;}
-.login-btn{background:#2196f3;}
-.ask-btn{background:#ff9800;}
+.nav-register{background:#4caf50;}
+.nav-login{background:#2196f3;}
+.nav-ask{background:#ff9800;}
 
-/* MOBILE */
-
-@media(max-width:480px){
-
-.register-box{
-
-width:95%;
-padding:30px 20px;
-
-}
-
-.app-title{
-font-size:26px;
-}
-
+label{
+display:block;
+margin-top:10px;
+font-size:13px;
+text-align:left;
 }
 
 </style>
-
 </head>
 
 <body>
 
 <div class="register-box">
 
-<div class="header-box">
-<h1 class="app-title">💡 Ask Experts</h1>
-<div class="app-sub">Create your expert account</div>
-</div>
+<h1 class="app-title">💡 AskExpert</h1>
+<div class="app-sub">Create your account</div>
 
 <form onsubmit="return registerUser()">
 
@@ -332,16 +205,16 @@ font-size:26px;
 <input id="phone" type="tel" placeholder="Mobile Number" required>
 </div>
 
-<button type="button" onclick="sendOTP()">Send OTP</button>
+<button type="button" class="otp-btn" onclick="sendOTP()">Send OTP</button>
 
 <div class="input-group">
 <i class="fa fa-key"></i>
 <input id="otp" placeholder="Enter OTP">
 </div>
 
-<button type="button" onclick="verifyOTP()">Verify OTP</button>
+<button type="button" class="verify-btn" onclick="verifyOTP()">Verify OTP</button>
 
-<select id="accountType" onchange="toggleProfession()" required>
+<select id="accountType" onchange="toggleExpert()" required>
 
 <option value="">Select Account Type</option>
 <option value="user">User</option>
@@ -349,42 +222,45 @@ font-size:26px;
 
 </select>
 
-<select id="profession" disabled>
+<!-- PROFESSIONAL FIELDS -->
 
+<div id="expertFields">
+
+<select id="profession">
 <option value="">Select Profession</option>
-<option>Lawyer</option>
 <option>Doctor</option>
+<option>Lawyer</option>
 <option>Engineer</option>
 <option>Teacher</option>
 <option>Police</option>
-<option>Business Expert</option>
 <option>IT Support</option>
 <option>Psychologist</option>
 <option>Career Advisor</option>
-
 </select>
 
-<input id="course" placeholder="Course (Example: MBBS)" disabled>
+<input id="course" placeholder="Course (Example: MBBS)">
 
 <label>Upload Certificate</label>
-<input id="certificateUpload" type="file" disabled>
+<input id="certificateUpload" type="file">
 
 <label>
-<input type="checkbox" id="talentRequest" disabled>
+<input type="checkbox" id="adminRequest">
 Request admin verification
 </label>
 
-<button type="submit">Register</button>
+</div>
+
+<button type="submit" class="register-btn">Register</button>
 
 </form>
 
 <div class="navigation-buttons">
 
-<button class="register-btn" onclick="location.href='register.html'">Register</button>
+<button class="nav-register" onclick="location.href='register.html'">Register</button>
 
-<button class="login-btn" onclick="location.href='login.html'">Login</button>
+<button class="nav-login" onclick="location.href='login.html'">Login</button>
 
-<button class="ask-btn" onclick="location.href='ask.html'">Ask</button>
+<button class="nav-ask" onclick="location.href='ask.html'">Ask</button>
 
 </div>
 
@@ -392,25 +268,27 @@ Request admin verification
 
 <script>
 
-/* YOUR ORIGINAL JAVASCRIPT (UNCHANGED) */
+/* STORAGE */
 
 function getUsers(){
 try{
-let data = JSON.parse(localStorage.getItem("users"));
-return Array.isArray(data) ? data : [];
-}catch(e){
+let data=JSON.parse(localStorage.getItem("users"));
+return Array.isArray(data)?data:[];
+}catch{
 return [];
 }
 }
 
-let verified=false;
+let otpVerified=false;
+
+/* OTP */
 
 function sendOTP(){
 
 let phone=document.getElementById("phone").value.trim();
 
 if(!/^[0-9]{10}$/.test(phone)){
-alert("Enter valid 10 digit phone number");
+alert("Enter valid phone number");
 return;
 }
 
@@ -418,67 +296,75 @@ let otp=Math.floor(100000+Math.random()*900000);
 
 localStorage.setItem("otp",otp);
 
-alert("OTP: "+otp);
+alert("Your OTP: "+otp);
 
 }
 
 function verifyOTP(){
 
 let entered=document.getElementById("otp").value;
-
 let real=localStorage.getItem("otp");
 
-if(!real){
-alert("Send OTP first");
-return;
-}
-
 if(entered===real){
-verified=true;
-localStorage.removeItem("otp");
+
+otpVerified=true;
+
 alert("OTP Verified");
+
 }else{
-verified=false;
+
 alert("Wrong OTP");
-}
 
 }
 
-function toggleProfession(){
+}
+
+/* SHOW EXPERT FIELDS */
+
+function toggleExpert(){
 
 let type=document.getElementById("accountType").value;
 
-let profession=document.getElementById("profession");
-let course=document.getElementById("course");
-let certificate=document.getElementById("certificateUpload");
-let talent=document.getElementById("talentRequest");
+let expertFields=document.getElementById("expertFields");
 
-let enable = type==="expert";
+if(type==="expert"){
 
-profession.disabled=!enable;
-course.disabled=!enable;
-certificate.disabled=!enable;
-talent.disabled=!enable;
+expertFields.style.display="block";
+
+}else{
+
+expertFields.style.display="none";
 
 }
 
-function checkCertificate(file){
+}
 
-if(!file) return null;
+/* AI CERTIFICATE CHECK */
+
+function aiCheck(file){
+
+if(!file) return "invalid";
 
 let name=file.name.toLowerCase();
 
-if(name.includes("mbbs") || name.includes("llb") || name.includes("btech") || name.includes("degree")){
+if(
+name.includes("mbbs") ||
+name.includes("btech") ||
+name.includes("degree") ||
+name.includes("llb")
+){
 return "verified";
 }
 
-return "pending";
+return "manual";
 
 }
 
+/* REGISTER */
+
 function registerUser(){
 
-if(!verified){
+if(!otpVerified){
 alert("Verify OTP first");
 return false;
 }
@@ -489,16 +375,19 @@ let password=document.getElementById("password").value;
 let phone=document.getElementById("phone").value.trim();
 
 let role=document.getElementById("accountType").value;
+
 let profession=document.getElementById("profession").value;
 let course=document.getElementById("course").value;
 
 let file=document.getElementById("certificateUpload").files[0];
-let talent=document.getElementById("talentRequest").checked;
+let admin=document.getElementById("adminRequest").checked;
 
 let users=getUsers();
 
+/* duplicate email */
+
 if(users.some(u=>u.email===email)){
-alert("Email already registered");
+alert("Email already exists");
 return false;
 }
 
@@ -512,36 +401,60 @@ return false;
 }
 
 if(file){
-status=checkCertificate(file);
-}
-else if(talent){
+
+let result=aiCheck(file);
+
+if(result==="verified"){
+
+status="verified";
+alert("AI verified certificate");
+
+}else{
+
 status="admin_review";
+alert("Certificate needs admin verification");
+
 }
-else{
-alert("Upload certificate or request admin review");
+
+}else if(admin){
+
+status="admin_review";
+
+}else{
+
+alert("Upload certificate or request admin verification");
 return false;
+
 }
 
 }
 
 let user={
+
 id:Date.now(),
+
 name:name,
 email:email,
 password:password,
 phone:phone,
+
 role:role || "user",
+
 profession:profession || "",
+
 course:course || "",
+
 certificate:file?file.name:"",
+
 status:status
+
 };
 
 users.push(user);
 
 localStorage.setItem("users",JSON.stringify(users));
 
-alert("Registration Successful!");
+alert("Registration successful");
 
 window.location.href="login.html";
 
