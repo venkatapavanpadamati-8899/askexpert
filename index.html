@@ -1,125 +1,392 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>AskExpert Platform</title>
 
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
 
-body{
+/* GLOBAL */
+
+*{
+box-sizing:border-box;
 margin:0;
-font-family:Arial, sans-serif;
+padding:0;
+font-family:'Segoe UI',Arial,sans-serif;
+}
+
+/* BODY */
+
+body{
 height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
-background:linear-gradient(135deg,#667eea,#764ba2);
+
+background:
+linear-gradient(rgba(0,0,0,0.45),rgba(0,0,0,0.55)),
+url("https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=1600")
+center/cover no-repeat;
+
+animation:bgPulse 12s ease-in-out infinite alternate;
 }
+
+/* BACKGROUND ANIMATION */
+
+@keyframes bgPulse{
+
+0%{filter:brightness(1);}
+50%{filter:brightness(1.15);}
+100%{filter:brightness(1);}
+
+}
+
+/* CARD */
 
 .container{
+
 text-align:center;
-background:white;
-padding:50px;
-border-radius:20px;
-box-shadow:0 20px 40px rgba(0,0,0,0.2);
-animation:fadeIn 1s;
+
+background:rgba(255,255,255,0.15);
+
+backdrop-filter:blur(18px);
+
+padding:60px;
+
+border-radius:25px;
+
+box-shadow:0 25px 60px rgba(0,0,0,0.45);
+
+color:white;
+
+max-width:520px;
+
+animation:fadeIn 1s,floatCard 6s ease-in-out infinite;
+
 }
+
+/* TITLE */
 
 .title{
+
 font-size:42px;
-color:#333;
+
+font-weight:700;
+
 margin-bottom:10px;
+
 }
+
+.title span{
+
+color:#ffd54f;
+
+}
+
+/* SUBTITLE */
 
 .subtitle{
+
 font-size:18px;
-color:#555;
-margin-bottom:30px;
+
+opacity:.9;
+
+margin-bottom:35px;
+
 }
+
+/* EXPERT ICONS */
+
+.experts{
+
+display:flex;
+
+justify-content:center;
+
+gap:20px;
+
+margin-bottom:30px;
+
+font-size:28px;
+
+}
+
+.experts i{
+
+background:rgba(255,255,255,0.2);
+
+padding:12px;
+
+border-radius:50%;
+
+transition:.3s;
+
+}
+
+.experts i:hover{
+
+background:rgba(255,255,255,0.4);
+
+transform:scale(1.2);
+
+}
+
+/* BUTTON AREA */
 
 .buttons{
+
 display:flex;
-gap:20px;
+
+gap:12px;
+
 justify-content:center;
+
 flex-wrap:wrap;
+
 }
 
-.btn{
-text-decoration:none;
+/* BUTTON STYLE */
+
+button{
+
 padding:14px 28px;
-border-radius:25px;
+
+border-radius:30px;
+
 font-size:18px;
+
 color:white;
-transition:0.3s;
+
+border:none;
+
+cursor:pointer;
+
+transition:.3s;
+
+display:flex;
+
+align-items:center;
+
+gap:8px;
+
+box-shadow:0 8px 20px rgba(0,0,0,0.35);
+
 }
 
-.register{
-background:#28a745;
+/* COLORS */
+
+.register{background:#28a745;}
+.login{background:#007bff;}
+.ask{background:#ff9800;}
+
+/* HOVER */
+
+button:hover{
+
+transform:scale(1.08);
+
+filter:brightness(1.1);
+
 }
 
-.register:hover{
-background:#1e7e34;
-transform:scale(1.1);
-}
-
-.login{
-background:#007bff;
-}
-
-.login:hover{
-background:#0056b3;
-transform:scale(1.1);
-}
-
-.ask{
-background:#ff9800;
-}
-
-.ask:hover{
-background:#e68900;
-transform:scale(1.1);
-}
+/* ANIMATIONS */
 
 @keyframes fadeIn{
+
 from{
 opacity:0;
 transform:translateY(-30px);
 }
+
 to{
 opacity:1;
 transform:translateY(0);
 }
+
+}
+
+@keyframes floatCard{
+
+0%{transform:translateY(0px);}
+50%{transform:translateY(-10px);}
+100%{transform:translateY(0px);}
+
+}
+
+/* MOBILE */
+
+@media(max-width:500px){
+
+.container{padding:35px;}
+
+.title{font-size:32px;}
+
+.subtitle{font-size:16px;}
+
 }
 
 </style>
-
 </head>
 
 <body>
 
 <div class="container">
 
-<h1 class="title">AskExpert</h1>
+<h1 class="title">Ask<span>Expert</span></h1>
 
 <p class="subtitle">
-Ask questions from verified professionals like Lawyers, Doctors, Teachers and Engineers.
+Ask questions from verified professionals like Lawyers, Doctors, Teachers, and Engineers.
 </p>
+
+<div class="experts">
+
+<i class="fa-solid fa-user-doctor"></i>
+<i class="fa-solid fa-scale-balanced"></i>
+<i class="fa-solid fa-laptop-code"></i>
+<i class="fa-solid fa-graduation-cap"></i>
+
+</div>
 
 <div class="buttons">
 
-<a href="register.html" class="btn register">Register</a>
+<button class="register" id="registerBtn" onclick="goRegister()">
+<i class="fa-solid fa-user-plus"></i> Register
+</button>
 
-<a href="login.html" class="btn login">Login</a>
+<button class="login" id="loginBtn" onclick="goLogin()">
+<i class="fa-solid fa-right-to-bracket"></i> Login
+</button>
 
-<a href="ask.html" class="btn ask">Ask Question</a>
+<button class="ask" id="askBtn" onclick="goToAsk()">
+<i class="fa-solid fa-question"></i> Ask Question
+</button>
 
 </div>
 
 </div>
 
-<script src="script.js"></script>
+<script>
+
+/* SAFE JSON */
+
+function getData(key){
+
+try{
+
+let data = JSON.parse(localStorage.getItem(key));
+
+if(typeof data === "object") return data;
+
+return null;
+
+}catch(e){
+
+return null;
+
+}
+
+}
+
+/* FULL XSS PROTECTION */
+
+function safe(text){
+
+if(!text) return "";
+
+return text.toString()
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+
+}
+
+/* PREVENT DOUBLE CLICK */
+
+function disableButton(btn){
+
+btn.disabled=true;
+
+setTimeout(()=>{
+btn.disabled=false;
+},1200);
+
+}
+
+/* NAVIGATION */
+
+function goRegister(){
+
+disableButton(document.getElementById("registerBtn"));
+
+window.location.href="register.html";
+
+}
+
+function goLogin(){
+
+disableButton(document.getElementById("loginBtn"));
+
+window.location.href="login.html";
+
+}
+
+/* ASK BUTTON SECURITY */
+
+function goToAsk(){
+
+let btn=document.getElementById("askBtn");
+
+disableButton(btn);
+
+let user = getData("loggedInUser");
+
+if(!user){
+
+alert("Please login first");
+
+window.location.href="login.html";
+
+return;
+
+}
+
+/* corrupted data protection */
+
+if(typeof user !== "object"){
+
+alert("Session error. Please login again");
+
+localStorage.removeItem("loggedInUser");
+
+window.location.href="login.html";
+
+return;
+
+}
+
+if(user.banned){
+
+alert("Your account is banned");
+
+window.location.href="login.html";
+
+return;
+
+}
+
+window.location.href="ask.html";
+
+}
+
+</script>
 
 </body>
 </html>
