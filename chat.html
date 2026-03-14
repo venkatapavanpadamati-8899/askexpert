@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
@@ -15,8 +16,6 @@ margin:0;
 padding:0;
 font-family:Segoe UI,sans-serif;
 }
-
-/* Background */
 
 body{
 
@@ -35,8 +34,6 @@ height:100vh;
 
 }
 
-/* Chat container */
-
 .chat-container{
 
 width:460px;
@@ -54,19 +51,7 @@ overflow:hidden;
 
 box-shadow:0 20px 60px rgba(0,0,0,0.4);
 
-animation:floatCard 6s ease-in-out infinite;
-
 }
-
-@keyframes floatCard{
-
-0%{transform:translateY(0)}
-50%{transform:translateY(-6px)}
-100%{transform:translateY(0)}
-
-}
-
-/* Header */
 
 .chat-header{
 
@@ -84,8 +69,6 @@ align-items:center;
 
 }
 
-/* Messages */
-
 .chat-messages{
 
 flex:1;
@@ -101,24 +84,7 @@ gap:12px;
 
 }
 
-/* Scrollbar */
-
-.chat-messages::-webkit-scrollbar{
-width:6px;
-}
-
-.chat-messages::-webkit-scrollbar-thumb{
-background:#4f46e5;
-border-radius:10px;
-}
-
-/* Message */
-
 .message{
-
-display:flex;
-gap:10px;
-align-items:flex-start;
 
 max-width:80%;
 
@@ -128,36 +94,9 @@ border-radius:18px;
 
 font-size:14px;
 
-animation:fadeMessage .3s ease;
+word-break:break-word;
 
 }
-
-@keyframes fadeMessage{
-
-from{
-opacity:0;
-transform:translateY(10px);
-}
-
-to{
-opacity:1;
-transform:translateY(0);
-}
-
-}
-
-/* Avatar */
-
-.message img{
-
-width:32px;
-height:32px;
-
-border-radius:50%;
-
-}
-
-/* User message */
 
 .message.user{
 
@@ -169,8 +108,6 @@ color:white;
 
 }
 
-/* Expert message */
-
 .message.expert{
 
 align-self:flex-start;
@@ -181,45 +118,21 @@ color:white;
 
 }
 
-/* Typing */
-
-.typing{
-font-style:italic;
-opacity:0.8;
-}
-
-/* Time */
-
 .time{
 
 font-size:11px;
+
 opacity:0.7;
 
-margin-top:3px;
+margin-top:4px;
 
 }
-
-/* File preview */
-
-.file-preview{
-
-margin-top:5px;
-
-max-width:200px;
-
-border-radius:8px;
-
-}
-
-/* Input area */
 
 .chat-input{
 
 display:flex;
 
 padding:10px;
-
-border-top:1px solid rgba(255,255,255,0.2);
 
 background:rgba(255,255,255,0.1);
 
@@ -239,8 +152,6 @@ outline:none;
 
 }
 
-/* Buttons */
-
 .chat-input button{
 
 margin-left:6px;
@@ -259,37 +170,38 @@ cursor:pointer;
 
 }
 
-.chat-input button:hover{
-
-background:#1d4ed8;
-
-}
-
 .clear-btn{
 
 background:#ef4444;
 
 }
 
-#fileUpload{
-display:none;
+.file-preview{
+
+max-width:200px;
+
+border-radius:8px;
+
+margin-top:5px;
+
 }
 
-.call-status{
+#fileUpload{
 
-text-align:center;
+display:none;
 
-font-size:13px;
+}
 
-padding:8px;
+.lang-select{
 
-background:rgba(255,255,255,0.15);
-
-color:white;
+margin:6px;
+border-radius:6px;
+padding:4px;
 
 }
 
 </style>
+
 </head>
 
 <body>
@@ -306,7 +218,16 @@ color:white;
 
 <div id="chatMessages" class="chat-messages"></div>
 
-<div id="callStatus" class="call-status"></div>
+<div style="padding:5px;text-align:center">
+
+<select id="language" class="lang-select">
+
+<option value="en-IN">English</option>
+<option value="te-IN">Telugu</option>
+
+</select>
+
+</div>
 
 <div class="chat-input">
 
@@ -326,73 +247,94 @@ color:white;
 
 <script>
 
-/* SAFE STORAGE */
+/* LOGIN CHECK */
 
-function getData(key){
-try{
+let user = JSON.parse(localStorage.getItem("loggedInUser"))
+        || JSON.parse(localStorage.getItem("user"));
+
+if(!user){
+
+alert("Please login");
+
+window.location.href="login.html";
+
+}
+
+/* STORAGE */
+
+function getChat(){
+
+let key="chat_"+user.email;
+
 return JSON.parse(localStorage.getItem(key)) || [];
-}catch(e){
-return [];
-}
+
 }
 
-/* XSS PROTECTION */
+function saveChat(data){
+
+let key="chat_"+user.email;
+
+localStorage.setItem(key,JSON.stringify(data));
+
+}
+
+/* XSS SAFE */
 
 function safe(text){
+
 if(!text) return "";
-return text.toString()
+
+return text
 .replace(/&/g,"&amp;")
 .replace(/</g,"&lt;")
 .replace(/>/g,"&gt;")
 .replace(/"/g,"&quot;")
 .replace(/'/g,"&#039;");
+
 }
 
 /* LOAD CHAT */
 
 function loadChat(){
 
-let messages=getData("chatMessages");
+let messages=getChat();
 
 let chatBox=document.getElementById("chatMessages");
 
 chatBox.innerHTML="";
 
-let userImg="https://cdn-icons-png.flaticon.com/512/219/219969.png";
-let expertImg="https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
-
-messages.forEach(m=>{
+messages.slice(-200).forEach(m=>{
 
 let div=document.createElement("div");
-div.className="message "+m.sender;
 
-let avatar=document.createElement("img");
-avatar.src=m.sender==="user"?userImg:expertImg;
+div.className="message "+m.sender;
 
 let content=document.createElement("div");
 
-let text=document.createElement("div");
-text.innerHTML=safe(m.text);
-
-content.appendChild(text);
-
-/* File preview */
+content.innerHTML=safe(m.text);
 
 if(m.file){
 
 if(m.fileType.startsWith("image")){
 
 let img=document.createElement("img");
+
 img.src=m.file;
+
 img.className="file-preview";
 
 content.appendChild(img);
 
-}else{
+}
+
+else{
 
 let link=document.createElement("a");
+
 link.href=m.file;
-link.innerText="📄 Download file";
+
+link.innerText="Download file";
+
 link.target="_blank";
 
 content.appendChild(link);
@@ -402,19 +344,35 @@ content.appendChild(link);
 }
 
 let time=document.createElement("div");
+
 time.className="time";
+
 time.innerText=m.time;
 
 content.appendChild(time);
 
-div.appendChild(avatar);
 div.appendChild(content);
 
 chatBox.appendChild(div);
 
 });
 
+setTimeout(()=>{
+
 chatBox.scrollTop=chatBox.scrollHeight;
+
+},50);
+
+}
+
+/* SPELL CORRECTION */
+
+function correctText(text){
+
+return text
+.replace(/plese/gi,"please")
+.replace(/becuse/gi,"because")
+.replace(/teh/gi,"the");
 
 }
 
@@ -428,37 +386,39 @@ let msg=input.value.trim();
 
 if(msg.length<1) return;
 
-let messages=getData("chatMessages");
+msg=correctText(msg);
+
+let messages=getChat();
 
 messages.push({
 
-text:safe(msg),
+text:msg,
 sender:"user",
 time:new Date().toLocaleTimeString()
 
 });
 
-localStorage.setItem("chatMessages",JSON.stringify(messages));
+saveChat(messages);
 
 input.value="";
 
 loadChat();
 
-/* typing animation */
-
 showTyping(msg);
 
 }
 
-/* typing animation */
+/* TYPING */
 
 function showTyping(userMsg){
 
 let chatBox=document.getElementById("chatMessages");
 
 let typing=document.createElement("div");
-typing.className="message expert typing";
-typing.innerText="Expert is typing...";
+
+typing.className="message expert";
+
+typing.innerText="Expert typing...";
 
 chatBox.appendChild(typing);
 
@@ -467,32 +427,63 @@ chatBox.scrollTop=chatBox.scrollHeight;
 setTimeout(()=>{
 
 typing.remove();
+
 expertReply(userMsg);
 
 },1500);
 
 }
 
-/* FILE UPLOAD */
+/* EXPERT AI REPLY */
+
+function expertReply(text){
+
+let reply="Please explain your problem more clearly.";
+
+text=text.toLowerCase();
+
+if(text.includes("laptop") || text.includes("computer"))
+reply="Check battery, charger or restart your laptop.";
+
+else if(text.includes("fever") || text.includes("health"))
+reply="You should consult a doctor and take rest.";
+
+else if(text.includes("law") || text.includes("court"))
+reply="Please provide legal details so a lawyer can help.";
+
+let messages=getChat();
+
+messages.push({
+
+text:reply,
+sender:"expert",
+time:new Date().toLocaleTimeString()
+
+});
+
+saveChat(messages);
+
+loadChat();
+
+}
+
+/* FILE SEND */
 
 function sendFile(){
 
-let fileInput=document.getElementById("fileUpload");
-
-let file=fileInput.files[0];
+let file=document.getElementById("fileUpload").files[0];
 
 if(!file) return;
 
-/* size limit */
-
 if(file.size>5000000){
-alert("File too large (Max 5MB)");
+
+alert("Max file size 5MB");
+
 return;
+
 }
 
-/* allowed types */
-
-const allowed=[
+let allowed=[
 "image/",
 "application/pdf",
 "application/msword",
@@ -500,15 +491,18 @@ const allowed=[
 ];
 
 if(!allowed.some(type=>file.type.startsWith(type))){
+
 alert("File type not allowed");
+
 return;
+
 }
 
 let reader=new FileReader();
 
 reader.onload=function(e){
 
-let messages=getData("chatMessages");
+let messages=getChat();
 
 messages.push({
 
@@ -520,38 +514,13 @@ time:new Date().toLocaleTimeString()
 
 });
 
-localStorage.setItem("chatMessages",JSON.stringify(messages));
+saveChat(messages);
 
 loadChat();
 
 }
 
 reader.readAsDataURL(file);
-
-}
-
-/* EXPERT AUTO REPLY */
-
-function expertReply(text){
-
-let reply="Please explain more.";
-
-if(text.toLowerCase().includes("laptop"))
-reply="Check your laptop battery or charger.";
-
-let messages=getData("chatMessages");
-
-messages.push({
-
-text:reply,
-sender:"expert",
-time:new Date().toLocaleTimeString()
-
-});
-
-localStorage.setItem("chatMessages",JSON.stringify(messages));
-
-loadChat();
 
 }
 
@@ -562,13 +531,16 @@ function startMic(){
 const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
 
 if(!SpeechRecognition){
-alert("Speech recognition not supported");
+
+alert("Voice not supported");
+
 return;
+
 }
 
 const recognition=new SpeechRecognition();
 
-recognition.lang="en-IN";
+recognition.lang=document.getElementById("language").value;
 
 recognition.start();
 
@@ -576,37 +548,33 @@ recognition.onresult=(event)=>{
 
 let text=event.results[0][0].transcript;
 
-if(text){
 document.getElementById("messageInput").value=text;
-}
 
 };
 
 }
 
-/* ENTER KEY SEND */
+/* ENTER KEY */
 
 document.getElementById("messageInput").addEventListener("keypress",function(e){
-if(e.key==="Enter"){
-sendMessage();
-}
+
+if(e.key==="Enter") sendMessage();
+
 });
 
 /* CLEAR CHAT */
 
 function clearChat(){
 
-if(confirm("Clear chat history?")){
+if(confirm("Clear chat?")){
 
-localStorage.removeItem("chatMessages");
+localStorage.removeItem("chat_"+user.email);
 
 loadChat();
 
 }
 
 }
-
-/* INIT */
 
 loadChat();
 
