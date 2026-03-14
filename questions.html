@@ -14,8 +14,6 @@ box-sizing:border-box;
 font-family:'Segoe UI',Arial;
 }
 
-/* BACKGROUND */
-
 body{
 min-height:100vh;
 
@@ -29,8 +27,6 @@ background-position:center;
 padding:40px;
 }
 
-/* CONTAINER */
-
 .container{
 max-width:900px;
 margin:auto;
@@ -43,8 +39,6 @@ border-radius:18px;
 
 box-shadow:0 20px 40px rgba(0,0,0,0.3);
 }
-
-/* HEADER */
 
 .header{
 text-align:center;
@@ -60,8 +54,6 @@ h2{
 margin-bottom:10px;
 }
 
-/* CHAT BUTTON */
-
 .chat-link{
 display:inline-block;
 padding:10px 20px;
@@ -76,8 +68,6 @@ font-weight:bold;
 background:#364fc7;
 }
 
-/* QUESTION CARD */
-
 .question-box{
 background:white;
 padding:20px;
@@ -86,16 +76,12 @@ border-radius:12px;
 box-shadow:0 10px 20px rgba(0,0,0,0.15);
 }
 
-/* ANSWER */
-
 .answer{
 margin-top:10px;
 padding:10px;
 background:#f4f6ff;
 border-radius:6px;
 }
-
-/* TEXTAREA */
 
 textarea{
 width:100%;
@@ -106,8 +92,6 @@ border-radius:6px;
 border:1px solid #ccc;
 resize:none;
 }
-
-/* BUTTON */
 
 button{
 margin-top:10px;
@@ -124,8 +108,6 @@ button:hover{
 background:#27ae60;
 }
 
-/* RATING */
-
 .rating{
 margin-top:10px;
 }
@@ -135,8 +117,6 @@ background:#ffc107;
 color:black;
 margin:3px;
 }
-
-/* TIMESTAMP */
 
 .timestamp{
 font-size:12px;
@@ -172,7 +152,7 @@ margin-top:5px;
 function getData(key){
 try{
 return JSON.parse(localStorage.getItem(key));
-}catch(e){
+}catch{
 return null;
 }
 }
@@ -180,18 +160,18 @@ return null;
 /* SAFE ARRAY */
 
 function getArray(key){
-let data = getData(key);
+let data=getData(key);
 return Array.isArray(data) ? data : [];
 }
 
 /* SAFE OBJECT */
 
 function getObject(key){
-let data = getData(key);
+let data=getData(key);
 return (data && typeof data==="object") ? data : {};
 }
 
-/* FULL XSS PROTECTION */
+/* XSS PROTECTION */
 
 function safe(text){
 if(!text) return "";
@@ -207,7 +187,9 @@ return text.toString()
 
 window.onload=function(){
 
-let user = getData("loggedInUser");
+let user =
+getData("loggedInUser") ||
+getData("user");
 
 if(!user){
 alert("Please login first");
@@ -229,9 +211,9 @@ loadQuestions();
 
 function loadQuestions(){
 
-let questions = getArray("questions");
+let questions=getArray("questions");
 
-let container = document.getElementById("questionsList");
+let container=document.getElementById("questionsList");
 
 container.innerHTML="";
 
@@ -244,6 +226,8 @@ return;
 }
 
 questions.forEach(q=>{
+
+let qid = Number(q.id || Date.now());
 
 let div=document.createElement("div");
 
@@ -267,19 +251,19 @@ ${q.notes ? `<p><b>Notes:</b> ${notes}</p>` : ""}
 
 <div class="answer"><b>Answer:</b> ${answer}</div>
 
-<textarea id="answer_${q.id}" placeholder="Write your answer..."></textarea>
+<textarea id="answer_${qid}" placeholder="Write your answer..."></textarea>
 
-<button onclick="submitAnswer(${Number(q.id)})">Submit Answer</button>
+<button onclick="submitAnswer(${qid})">Submit Answer</button>
 
 <div class="rating">
 
 <p><b>Rate this expert:</b></p>
 
-<button onclick="rateExpert('${q.profession}',5)">⭐5</button>
-<button onclick="rateExpert('${q.profession}',4)">⭐4</button>
-<button onclick="rateExpert('${q.profession}',3)">⭐3</button>
-<button onclick="rateExpert('${q.profession}',2)">⭐2</button>
-<button onclick="rateExpert('${q.profession}',1)">⭐1</button>
+<button onclick="rateExpert('${profession}',5)">⭐5</button>
+<button onclick="rateExpert('${profession}',4)">⭐4</button>
+<button onclick="rateExpert('${profession}',3)">⭐3</button>
+<button onclick="rateExpert('${profession}',2)">⭐2</button>
+<button onclick="rateExpert('${profession}',1)">⭐1</button>
 
 </div>
 
@@ -287,14 +271,12 @@ ${q.notes ? `<p><b>Notes:</b> ${notes}</p>` : ""}
 
 container.appendChild(div);
 
-/* ENTER KEY SUBMIT */
-
-let textarea=document.getElementById("answer_"+q.id);
+let textarea=document.getElementById("answer_"+qid);
 
 textarea.addEventListener("keypress",function(e){
 if(e.key==="Enter" && !e.shiftKey){
 e.preventDefault();
-submitAnswer(q.id);
+submitAnswer(qid);
 }
 });
 
@@ -322,8 +304,6 @@ alert("Question not found");
 return;
 }
 
-/* sanitize answer before saving */
-
 questions[index].answer=safe(text);
 
 localStorage.setItem("questions",JSON.stringify(questions));
@@ -340,11 +320,13 @@ function rateExpert(expert,stars){
 
 let ratings=getObject("expertRatings");
 
-/* prevent rating spam */
+let user =
+getData("loggedInUser") ||
+getData("user");
 
-let rated = localStorage.getItem("rated_"+expert);
+let key="rated_"+user.email+"_"+expert;
 
-if(rated){
+if(localStorage.getItem(key)){
 alert("You already rated this expert");
 return;
 }
@@ -358,11 +340,9 @@ ratings[expert].count += 1;
 
 localStorage.setItem("expertRatings",JSON.stringify(ratings));
 
-localStorage.setItem("rated_"+expert,true);
+localStorage.setItem(key,true);
 
-let avg = ratings[expert].count
-? (ratings[expert].total/ratings[expert].count).toFixed(1)
-: "0";
+let avg = (ratings[expert].total/ratings[expert].count).toFixed(1);
 
 alert("Thanks! "+expert+" rating: ⭐ "+avg);
 
