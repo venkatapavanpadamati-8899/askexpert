@@ -1,95 +1,109 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 
-<title>Admin Panel - AskExpert</title>
-
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AskExpert AI Admin Panel</title>
 
 <link rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
 
-*{box-sizing:border-box;}
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI;
+}
 
 body{
-margin:0;
-font-family:Segoe UI;
 
 background:
-linear-gradient(rgba(0,0,0,.6),rgba(0,0,0,.6)),
-url("https://images.unsplash.com/photo-1552664730-d307ca884978?w=1600&q=80")
+linear-gradient(rgba(0,0,0,.7),rgba(0,0,0,.7)),
+url("https://images.unsplash.com/photo-1552664730-d307ca884978?w=1600")
 no-repeat center/cover fixed;
 
-padding:40px;
+padding:30px;
+
 }
 
 .container{
-background:white;
-max-width:1000px;
+
+max-width:1100px;
 margin:auto;
-padding:35px;
-border-radius:18px;
-box-shadow:0 20px 60px rgba(0,0,0,.3);
+background:white;
+padding:30px;
+border-radius:15px;
+box-shadow:0 20px 40px rgba(0,0,0,.4);
+
 }
 
-h2{text-align:center;margin-bottom:35px;}
+h1{
+text-align:center;
+margin-bottom:20px;
+}
 
-.section{margin-bottom:40px;}
+.section{
+margin-top:40px;
+}
 
 .box{
-background:#fafafa;
-border-radius:10px;
+
+background:#f5f7ff;
 padding:15px;
 margin-bottom:12px;
+border-radius:10px;
 display:flex;
 justify-content:space-between;
 align-items:center;
-box-shadow:0 4px 12px rgba(0,0,0,.08);
-}
+box-shadow:0 5px 10px rgba(0,0,0,.1);
 
-.details{max-width:70%;font-size:14px;}
+}
 
 button{
-background:#dc3545;
-color:white;
+
+padding:6px 12px;
 border:none;
-padding:6px 10px;
 border-radius:6px;
-cursor:pointer;
 margin-left:5px;
+cursor:pointer;
+
 }
 
-button:hover{background:#b02a37;}
+.approve{background:#2ecc71;color:white;}
+.reject{background:#e53935;color:white;}
+.view{background:#3498db;color:white;}
+.ban{background:#fb8c00;color:white;}
 
-.alert{color:#d32f2f;font-weight:600;margin-left:6px;}
+.alert{color:red;font-weight:600;}
 .verify{color:green;font-weight:600;}
-.review{color:red;font-weight:600;}
-.banned{color:#ff0000;font-weight:700;}
 
 </style>
+
 </head>
 
-<body onload="loadAdmin()">
+<body onload="initAdmin()">
 
 <div class="container">
 
-<h2>Admin Panel - AskExpert</h2>
+<h1>AskExpert AI Admin Panel</h1>
 
 <div class="section">
-<h3>Registered Users</h3>
-<div id="usersList"></div>
+<h2>Registered Users</h2>
+<div id="users"></div>
 </div>
 
 <div class="section">
-<h3>All Questions</h3>
-<div id="adminQuestions"></div>
+<h2>Expert Certificates</h2>
+<div id="docs"></div>
 </div>
 
 <div class="section">
-<h3>Expert Ratings</h3>
-<div id="ratingsList"></div>
+<h2>User Chats</h2>
+<div id="chats"></div>
 </div>
 
 </div>
@@ -99,93 +113,66 @@ button:hover{background:#b02a37;}
 /* SAFE STORAGE */
 
 function getData(key){
+
 try{
-let data = JSON.parse(localStorage.getItem(key));
-return data ? data : (key==="expertRatings" ? {} : []);
-}catch(e){
-return key==="expertRatings" ? {} : [];
+return JSON.parse(localStorage.getItem(key)) || [];
 }
+catch{
+return [];
 }
 
-/* XSS SECURITY */
+}
+
+/* XSS SAFE */
 
 function safe(text){
-if(!text) return "N/A";
+
+if(!text) return "";
+
 return text.toString()
+.replace(/&/g,"&amp;")
 .replace(/</g,"&lt;")
-.replace(/>/g,"&gt;");
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+
 }
 
-/* ADMIN SECURITY */
+/* ADMIN LOGIN CHECK */
 
-function loadAdmin(){
+function initAdmin(){
 
-let user=getData("loggedInUser");
+let user =
+JSON.parse(localStorage.getItem("loggedInUser"))
+||
+JSON.parse(localStorage.getItem("user"));
 
-if(!user || (user.role!=="admin" && user.type!=="admin")){
+if(!user || user.role !== "admin"){
+
 alert("Admin access only");
+
 window.location.href="login.html";
+
 return;
+
 }
 
 loadUsers();
-loadQuestions();
-loadRatings();
+loadDocuments();
+loadChats();
 
 }
 
-/* VALID PROFESSIONS */
+/* FAKE USER DETECTION */
 
-const validProfessions=[
-"doctor","lawyer","engineer","teacher","police",
-"arbitrator","business","lecturer","professor",
-"researcher","finance","sales","marketing",
-"startup","it","psychologist","career"
-];
+function detectFakeUser(u){
 
-/* AI SPAM DETECTION */
+if(!u.name || u.name.length < 3) return true;
 
-function detectSpam(text){
-
-if(!text) return true;
-
-text=text.toLowerCase();
-
-if(text.length<8) return true;
-
-if(text.includes("test")||text.includes("asdf")) return true;
-
-if(/(.)\1{5,}/.test(text)) return true;
+if(u.email && (u.email.includes("test") || u.email.includes("fake")))
+return true;
 
 return false;
-
-}
-
-/* AI FAKE USER DETECTION */
-
-function detectFakeUser(user){
-
-if(!user.name || user.name.length<3) return true;
-
-if(user.email && user.email.includes("test")) return true;
-
-return false;
-
-}
-
-/* AI MARKS VERIFICATION */
-
-function verifyMarks(user){
-
-let m10=Number(user.marks10||0);
-let mInter=Number(user.marksInter||0);
-let mDegree=Number(user.marksDegree||0);
-
-let avg=(m10+mInter+mDegree)/3;
-
-if(avg>=65) return "ai_certified";
-else if(avg>=50) return "verified";
-else return "review";
 
 }
 
@@ -195,74 +182,48 @@ function loadUsers(){
 
 let users=getData("users");
 
-let container=document.getElementById("usersList");
+let container=document.getElementById("users");
+
 container.innerHTML="";
 
 if(users.length===0){
-container.innerHTML="<p>No users found.</p>";
+container.innerHTML="<p>No users registered</p>";
 return;
 }
 
-users.forEach((u,index)=>{
+users.forEach((u,i)=>{
 
-let div=document.createElement("div");
-div.className="box";
-
-let alertMsg="";
+let fakeAlert="";
 
 if(detectFakeUser(u)){
-alertMsg=`<span class='alert'>⚠ Suspicious User</span>`;
+fakeAlert="<span class='alert'>⚠ Fake User</span>";
 }
 
-else if(u.profession &&
-!validProfessions.includes(u.profession.toLowerCase())){
-alertMsg=`<span class='alert'>⚠ Suspicious Profession</span>`;
-}
+let div=document.createElement("div");
 
-let status=verifyMarks(u);
-
-let statusText="";
-
-if(status==="ai_certified")
-statusText="<span class='verify'>AI Certified 🤖</span>";
-else if(status==="verified")
-statusText="<span class='verify'>Verified Professional</span>";
-else
-statusText="<span class='review'>Admin Review</span>";
-
-let bannedText=u.banned?"<span class='banned'>🚫 BANNED</span>":"";
+div.className="box";
 
 div.innerHTML=`
 
-<div class="details">
+<div>
 
-<b>Name:</b> ${safe(u.name)} ${bannedText}<br>
+<b>Name:</b> ${safe(u.name)} ${fakeAlert}<br>
 <b>Email:</b> ${safe(u.email)}<br>
-<b>Profession:</b> ${safe(u.profession)} ${alertMsg}<br>
-<b>Status:</b> ${statusText}<br>
-<b>Role:</b> ${safe(u.role || "user")}
+<b>Role:</b> ${safe(u.role || "user")}<br>
+Status: ${u.banned ? "BANNED ❌" : "Active ✅"}
 
 </div>
 
 <div>
 
-<button onclick="makeExpert(${index})">
-<i class="fa-solid fa-user-tie"></i>
-</button>
+<button class="approve" onclick="approveUser(${i})">Approve</button>
 
-<button onclick="makeAdmin(${index})">
-<i class="fa-solid fa-user-shield"></i>
-</button>
+<button class="ban" onclick="banUser(${i})">Ban</button>
 
-<button onclick="banUser(${index})">
-<i class="fa-solid fa-ban"></i>
-</button>
-
-<button onclick="deleteUser(${index})">
-<i class="fa-solid fa-trash"></i>
-</button>
+<button class="reject" onclick="deleteUser(${i})">Delete</button>
 
 </div>
+
 `;
 
 container.appendChild(div);
@@ -271,31 +232,17 @@ container.appendChild(div);
 
 }
 
-/* ROLE FUNCTIONS */
+/* APPROVE USER */
 
-function makeExpert(index){
-
-let users=getData("users");
-
-users[index].role="expert";
-
-localStorage.setItem("users",JSON.stringify(users));
-
-alert("User promoted to Expert");
-
-loadUsers();
-
-}
-
-function makeAdmin(index){
+function approveUser(i){
 
 let users=getData("users");
 
-users[index].role="admin";
+users[i].verified=true;
 
 localStorage.setItem("users",JSON.stringify(users));
 
-alert("User promoted to Admin");
+alert("User approved");
 
 loadUsers();
 
@@ -303,11 +250,11 @@ loadUsers();
 
 /* BAN USER */
 
-function banUser(index){
+function banUser(i){
 
 let users=getData("users");
 
-users[index].banned=true;
+users[i].banned=true;
 
 localStorage.setItem("users",JSON.stringify(users));
 
@@ -319,13 +266,13 @@ loadUsers();
 
 /* DELETE USER */
 
-function deleteUser(index){
+function deleteUser(i){
 
 if(!confirm("Delete user?")) return;
 
 let users=getData("users");
 
-users.splice(index,1);
+users.splice(i,1);
 
 localStorage.setItem("users",JSON.stringify(users));
 
@@ -333,45 +280,50 @@ loadUsers();
 
 }
 
-/* LOAD QUESTIONS */
+/* LOAD DOCUMENTS */
 
-function loadQuestions(){
+function loadDocuments(){
 
-let questions=getData("questions");
+let docs=getData("documents");
 
-let container=document.getElementById("adminQuestions");
+let container=document.getElementById("docs");
 
 container.innerHTML="";
 
-if(questions.length===0){
-container.innerHTML="<p>No questions found.</p>";
+if(docs.length===0){
+container.innerHTML="<p>No certificates uploaded</p>";
 return;
 }
 
-questions.forEach((q,index)=>{
+docs.forEach((d,i)=>{
+
+let status=d.verified
+? "<span class='verify'>Verified</span>"
+: "<span class='alert'>Pending</span>";
 
 let div=document.createElement("div");
+
 div.className="box";
-
-let alertMsg="";
-
-if(detectSpam(q.question)){
-alertMsg=`<span class="alert">⚠ Spam Question</span>`;
-}
 
 div.innerHTML=`
 
-<div class="details">
+<div>
 
-<b>Question:</b> ${safe(q.question)} ${alertMsg}<br>
-<b>Expert:</b> ${safe(q.profession)}<br>
-<b>Answer:</b> ${safe(q.answer)}
+<b>Expert:</b> ${safe(d.name)}<br>
+<b>Profession:</b> ${safe(d.profession)}<br>
+Status: ${status}
 
 </div>
 
-<button onclick="deleteQuestion(${index})">
-<i class="fa-solid fa-trash"></i>
-</button>
+<div>
+
+<button class="view" onclick="viewDoc('${d.file}')">View</button>
+
+<button class="approve" onclick="verifyDoc(${i})">Verify</button>
+
+<button class="reject" onclick="rejectDoc(${i})">Reject</button>
+
+</div>
 
 `;
 
@@ -381,80 +333,93 @@ container.appendChild(div);
 
 }
 
-/* DELETE QUESTION */
+/* VIEW DOCUMENT */
 
-function deleteQuestion(index){
+function viewDoc(file){
+window.open(file,"_blank");
+}
 
-if(!confirm("Delete question?")) return;
+/* VERIFY DOCUMENT */
 
-let questions=getData("questions");
+function verifyDoc(i){
 
-questions.splice(index,1);
+let docs=getData("documents");
 
-localStorage.setItem("questions",JSON.stringify(questions));
+docs[i].verified=true;
 
-loadQuestions();
+localStorage.setItem("documents",JSON.stringify(docs));
+
+alert("Certificate verified");
+
+loadDocuments();
 
 }
 
-/* LOAD RATINGS */
+/* REJECT DOCUMENT */
 
-function loadRatings(){
+function rejectDoc(i){
 
-let ratings=getData("expertRatings");
+let docs=getData("documents");
 
-let container=document.getElementById("ratingsList");
+docs.splice(i,1);
+
+localStorage.setItem("documents",JSON.stringify(docs));
+
+loadDocuments();
+
+}
+
+/* LOAD CHATS */
+
+function loadChats(){
+
+let container=document.getElementById("chats");
 
 container.innerHTML="";
 
-if(Object.keys(ratings).length===0){
-container.innerHTML="<p>No ratings available.</p>";
-return;
+let found=false;
+
+for(let key in localStorage){
+
+if(key.startsWith("chat_")){
+
+let chats;
+
+try{
+chats=JSON.parse(localStorage.getItem(key));
+}
+catch{
+continue;
 }
 
-for(let expert in ratings){
+found=true;
 
-let avg=ratings[expert].count
-? (ratings[expert].total/ratings[expert].count).toFixed(1)
-: 0;
+chats.forEach(c=>{
 
 let div=document.createElement("div");
+
 div.className="box";
 
 div.innerHTML=`
 
-<div class="details">
-
-<b>Expert:</b> ${safe(expert)}<br>
-<b>Average Rating:</b> ⭐ ${avg} (${ratings[expert].count} ratings)
-
+<div>
+<b>${safe(c.sender)}</b>: ${safe(c.text)}<br>
+<small>${safe(c.time)}</small>
 </div>
-
-<button onclick="deleteRating('${expert}')">
-<i class="fa-solid fa-trash"></i>
-</button>
 
 `;
 
 container.appendChild(div);
 
-}
+});
 
 }
 
-/* RESET RATINGS */
+}
 
-function deleteRating(expert){
-
-if(!confirm("Reset ratings?")) return;
-
-let ratings=getData("expertRatings");
-
-delete ratings[expert];
-
-localStorage.setItem("expertRatings",JSON.stringify(ratings));
-
-loadRatings();
+if(!found){
+container.innerHTML="<p>No chats available</p>";
+}
 
 }
 
