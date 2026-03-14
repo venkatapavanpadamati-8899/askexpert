@@ -30,8 +30,6 @@ padding:20px;
 background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
 }
 
-/* background image */
-
 body:before{
 content:"";
 position:fixed;
@@ -39,31 +37,21 @@ top:0;
 left:0;
 right:0;
 bottom:0;
-
 background:url("https://images.unsplash.com/photo-1581092795360-fd1ca04f0952");
-
 background-size:cover;
 background-position:center;
-
 opacity:.18;
 z-index:-1;
 }
-
-/* glass card */
 
 .register-box{
 width:420px;
 padding:40px 30px;
 border-radius:20px;
-
 background:rgba(255,255,255,0.12);
-
 backdrop-filter:blur(18px);
-
 border:1px solid rgba(255,255,255,0.2);
-
 box-shadow:0 30px 80px rgba(0,0,0,0.45);
-
 color:white;
 text-align:center;
 }
@@ -105,8 +93,6 @@ font-size:14px;
 outline:none;
 }
 
-/* FIX FOR WHITE DROPDOWN */
-
 select option{
 background:white;
 color:black;
@@ -116,8 +102,6 @@ input::placeholder{
 color:#eee;
 }
 
-/* expert section */
-
 #expertFields{
 display:none;
 margin-top:15px;
@@ -125,8 +109,6 @@ padding:12px;
 border-radius:10px;
 background:rgba(255,255,255,0.08);
 }
-
-/* buttons */
 
 button{
 width:100%;
@@ -140,23 +122,13 @@ font-weight:500;
 transition:.3s;
 }
 
-.otp-btn{
-background:linear-gradient(45deg,#ff9800,#ff5722);
-}
-
-.verify-btn{
-background:linear-gradient(45deg,#00c853,#2e7d32);
-}
-
-.register-btn{
-background:linear-gradient(45deg,#00c6ff,#0072ff);
-}
+.otp-btn{background:linear-gradient(45deg,#ff9800,#ff5722);}
+.verify-btn{background:linear-gradient(45deg,#00c853,#2e7d32);}
+.register-btn{background:linear-gradient(45deg,#00c6ff,#0072ff);}
 
 button:hover{
 transform:scale(1.05);
 }
-
-/* navigation buttons */
 
 .navigation-buttons{
 display:flex;
@@ -229,43 +201,25 @@ text-align:left;
 
 </select>
 
-<!-- PROFESSIONAL FIELDS -->
-
 <div id="expertFields">
 
 <select id="profession">
-
 <option value="">Select Profession</option>
-
 <option>Doctor</option>
-<option>Nurse</option>
-<option>Pharmacist</option>
 <option>Lawyer</option>
-<option>Advocate</option>
 <option>Engineer</option>
-<option>Software Developer</option>
 <option>Teacher</option>
-<option>Lecturer</option>
-<option>Professor</option>
-<option>Police</option>
-<option>Army</option>
-<option>Banker</option>
-<option>Accountant</option>
-<option>Chartered Accountant</option>
 <option>Psychologist</option>
-<option>Career Advisor</option>
 <option>IT Support</option>
 <option>Business Consultant</option>
-<option>Entrepreneur</option>
-
 </select>
 
 <input id="course" placeholder="Course (Example: MBBS)">
 
-<label>Upload Certificate (Professional Qualification Proof)</label>
+<label>Upload Certificate</label>
 <input id="certificateUpload" type="file">
 
-<label>Upload Marks Memo (10th / Inter / Diploma / BTech / Degree)</label>
+<label>Upload Marks Memo</label>
 <input id="marksMemoUpload" type="file">
 
 <label>
@@ -282,9 +236,7 @@ Request admin verification
 <div class="navigation-buttons">
 
 <button class="nav-register" onclick="location.href='register.html'">Register</button>
-
 <button class="nav-login" onclick="location.href='login.html'">Login</button>
-
 <button class="nav-ask" onclick="location.href='ask.html'">Ask</button>
 
 </div>
@@ -293,7 +245,7 @@ Request admin verification
 
 <script>
 
-/* STORAGE */
+/* SAFE USERS STORAGE */
 
 function getUsers(){
 try{
@@ -306,56 +258,72 @@ return [];
 
 let otpVerified=false;
 
-/* OTP */
+/* SEND OTP */
 
 function sendOTP(){
 
 let phone=document.getElementById("phone").value.trim();
 
 if(!/^[0-9]{10}$/.test(phone)){
-alert("Enter valid phone number");
+alert("Enter valid 10 digit phone number");
 return;
 }
 
-let otp=Math.floor(100000+Math.random()*900000);
+let otp=(Math.floor(100000+Math.random()*900000)).toString();
 
 localStorage.setItem("otp",otp);
 
-alert("Your OTP: "+otp);
+alert("Demo OTP: "+otp);
 
 }
 
+/* VERIFY OTP */
+
 function verifyOTP(){
 
-let entered=document.getElementById("otp").value;
+let entered=document.getElementById("otp").value.trim();
 let real=localStorage.getItem("otp");
 
 if(entered===real){
 
 otpVerified=true;
 
-alert("OTP Verified");
+alert("OTP Verified Successfully");
 
 }else{
 
-alert("Wrong OTP");
+alert("Invalid OTP");
 
 }
 
 }
+
+/* TOGGLE EXPERT */
 
 function toggleExpert(){
 
 let type=document.getElementById("accountType").value;
-let expertFields=document.getElementById("expertFields");
 
-if(type==="expert"){
-expertFields.style.display="block";
-}else{
-expertFields.style.display="none";
-}
+document.getElementById("expertFields").style.display =
+(type==="expert")?"block":"none";
 
 }
+
+/* FILE VALIDATION */
+
+function validateFile(file){
+
+if(!file) return true;
+
+let allowed=["pdf","jpg","jpeg","png"];
+
+let ext=file.name.split(".").pop().toLowerCase();
+
+return allowed.includes(ext);
+
+}
+
+/* AI CHECK */
 
 function aiCheck(file){
 
@@ -367,7 +335,8 @@ if(
 name.includes("mbbs") ||
 name.includes("btech") ||
 name.includes("degree") ||
-name.includes("llb")
+name.includes("llb") ||
+name.includes("certificate")
 ){
 return "verified";
 }
@@ -375,6 +344,8 @@ return "verified";
 return "manual";
 
 }
+
+/* REGISTER */
 
 function registerUser(){
 
@@ -388,20 +359,41 @@ let email=document.getElementById("email").value.trim().toLowerCase();
 let password=document.getElementById("password").value;
 let phone=document.getElementById("phone").value.trim();
 
-let role=document.getElementById("accountType").value;
+let role=document.getElementById("accountType").value || "user";
 
-let profession=document.getElementById("profession").value;
+let profession=document.getElementById("profession").value.toLowerCase();
 let course=document.getElementById("course").value;
 
-let file=document.getElementById("certificateUpload").files[0];
+let certificate=document.getElementById("certificateUpload").files[0];
 let marksMemo=document.getElementById("marksMemoUpload").files[0];
 
-let admin=document.getElementById("adminRequest").checked;
+let adminRequest=document.getElementById("adminRequest").checked;
 
 let users=getUsers();
 
+/* EMAIL VALIDATION */
+
+if(!/^\S+@\S+\.\S+$/.test(email)){
+alert("Invalid email");
+return false;
+}
+
+/* DUPLICATE CHECK */
+
 if(users.some(u=>u.email===email)){
 alert("Email already exists");
+return false;
+}
+
+if(users.some(u=>u.phone===phone)){
+alert("Phone number already used");
+return false;
+}
+
+/* FILE VALIDATION */
+
+if(!validateFile(certificate) || !validateFile(marksMemo)){
+alert("Only PDF/JPG/PNG files allowed");
 return false;
 }
 
@@ -414,19 +406,13 @@ alert("Select profession");
 return false;
 }
 
-if(file){
+if(certificate){
 
-let result=aiCheck(file);
+let aiResult=aiCheck(certificate);
 
-if(result==="verified"){
-status="verified";
-alert("AI verified certificate");
-}else{
-status="admin_review";
-alert("Certificate needs admin verification");
-}
+status=(aiResult==="verified")?"verified":"admin_review";
 
-}else if(admin){
+}else if(adminRequest){
 
 status="admin_review";
 
@@ -439,30 +425,24 @@ return false;
 
 }
 
-let user={
+let newUser={
 
 id:Date.now(),
-
 name:name,
 email:email,
 password:password,
 phone:phone,
-
-role:role || "user",
-
+role:role,
 profession:profession || "",
-
 course:course || "",
-
-certificate:file?file.name:"",
-
+certificate:certificate?certificate.name:"",
 marksMemo:marksMemo?marksMemo.name:"",
-
-status:status
+status:status,
+createdAt:new Date().toLocaleString()
 
 };
 
-users.push(user);
+users.push(newUser);
 
 localStorage.setItem("users",JSON.stringify(users));
 
