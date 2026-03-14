@@ -21,22 +21,25 @@ padding:0;
 font-family:'Segoe UI',Arial,sans-serif;
 }
 
-/* BODY */
+/* BODY BACKGROUND */
 
 body{
+
 height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
 
-/* CHANGE BACKGROUND IMAGE HERE */
+/* CLEAR IMAGE */
 
-background:
-linear-gradient(rgba(0,0,0,0.12),rgba(0,0,0,0.18)),
-url("https://images.unsplash.com/photo-1557804506-669a67965ba0?q=80&w=1600");
+background-image:
+linear-gradient(rgba(0,0,0,0.15),rgba(0,0,0,0.2)),
+url("https://images.unsplash.com/photo-1556157382-97eda2d62296?w=1600");
 
 background-size:cover;
 background-position:center;
+background-attachment:fixed;
+
 }
 
 /* CARD */
@@ -45,9 +48,9 @@ background-position:center;
 
 text-align:center;
 
-background:rgba(255,255,255,0.22);
+background:rgba(255,255,255,0.25);
 
-backdrop-filter:blur(14px);
+backdrop-filter:blur(12px);
 
 padding:60px;
 
@@ -65,13 +68,13 @@ transition:0.4s;
 
 }
 
-/* CARD HOVER */
+/* HOVER EFFECT */
 
 .container:hover{
 
 transform:scale(1.03);
 
-box-shadow:0 35px 80px rgba(0,0,0,0.45);
+box-shadow:0 35px 70px rgba(0,0,0,0.45);
 
 }
 
@@ -99,7 +102,7 @@ color:#ffd54f;
 
 font-size:18px;
 
-opacity:.9;
+opacity:.95;
 
 margin-bottom:35px;
 
@@ -125,7 +128,7 @@ font-size:28px;
 
 .experts i{
 
-background:rgba(255,255,255,0.3);
+background:rgba(255,255,255,0.35);
 
 padding:14px;
 
@@ -135,19 +138,17 @@ transition:0.3s;
 
 }
 
-/* ICON HOVER */
-
 .experts i:hover{
 
-transform:scale(1.15);
+transform:scale(1.2);
 
-background:rgba(255,255,255,0.6);
+background:white;
 
 color:#333;
 
 }
 
-/* BUTTONS */
+/* BUTTON AREA */
 
 .buttons{
 
@@ -161,7 +162,7 @@ flex-wrap:wrap;
 
 }
 
-/* BUTTON */
+/* BUTTON STYLE */
 
 button{
 
@@ -183,7 +184,7 @@ align-items:center;
 
 gap:8px;
 
-box-shadow:0 8px 20px rgba(0,0,0,0.25);
+box-shadow:0 10px 25px rgba(0,0,0,0.35);
 
 transition:0.3s;
 
@@ -193,7 +194,7 @@ transition:0.3s;
 
 .register{
 
-background:linear-gradient(45deg,#28a745,#43d66c);
+background:linear-gradient(45deg,#28a745,#3ddc84);
 
 }
 
@@ -205,11 +206,11 @@ background:linear-gradient(45deg,#007bff,#00c6ff);
 
 }
 
-/* HOVER */
+/* BUTTON HOVER */
 
 button:hover{
 
-transform:scale(1.08);
+transform:scale(1.1);
 
 filter:brightness(1.1);
 
@@ -219,16 +220,12 @@ filter:brightness(1.1);
 
 @media(max-width:500px){
 
-.container{
-padding:40px 25px;
-}
-
 .title{
 font-size:32px;
 }
 
 .subtitle{
-font-size:16px;
+font-size:15px;
 }
 
 }
@@ -262,11 +259,17 @@ Ask questions from verified professionals like Lawyers, Doctors, Teachers, and E
 <div class="buttons">
 
 <button class="register" onclick="goRegister()">
-<i class="fa-solid fa-user-plus"></i> Register
+
+<i class="fa-solid fa-user-plus"></i>
+Register
+
 </button>
 
 <button class="login" onclick="goLogin()">
-<i class="fa-solid fa-right-to-bracket"></i> Login
+
+<i class="fa-solid fa-right-to-bracket"></i>
+Login
+
 </button>
 
 </div>
@@ -275,11 +278,15 @@ Ask questions from verified professionals like Lawyers, Doctors, Teachers, and E
 
 <script>
 
+/* REGISTER PAGE */
+
 function goRegister(){
 
 window.location.href="register.html";
 
 }
+
+/* LOGIN PAGE */
 
 function goLogin(){
 
@@ -290,5 +297,4 @@ window.location.href="login.html";
 </script>
 
 </body>
-
 </html>
