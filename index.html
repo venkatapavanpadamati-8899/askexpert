@@ -12,7 +12,6 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 
 <style>
 
-/* GLOBAL */
 *{
 box-sizing:border-box;
 margin:0;
@@ -20,7 +19,6 @@ padding:0;
 font-family:'Segoe UI',Arial,sans-serif;
 }
 
-/* BODY */
 body{
 height:100vh;
 display:flex;
@@ -31,17 +29,10 @@ background:
 linear-gradient(rgba(0,0,0,0.45),rgba(0,0,0,0.55)),
 url("https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=1600")
 center/cover no-repeat;
-
-animation:bgPulse 12s ease-in-out infinite alternate;
-}
-
-@keyframes bgPulse{
-0%{filter:brightness(1);}
-50%{filter:brightness(1.15);}
-100%{filter:brightness(1);}
 }
 
 /* CARD */
+
 .container{
 text-align:center;
 background:rgba(255,255,255,0.15);
@@ -51,15 +42,10 @@ border-radius:25px;
 box-shadow:0 25px 60px rgba(0,0,0,0.45);
 color:white;
 max-width:520px;
-transition:0.4s;
-}
-
-.container:hover{
-box-shadow:0 35px 80px rgba(0,0,0,0.6);
-transform:scale(1.02);
 }
 
 /* TITLE */
+
 .title{
 font-size:42px;
 font-weight:700;
@@ -77,6 +63,7 @@ margin-bottom:35px;
 }
 
 /* ICONS */
+
 .experts{
 display:flex;
 justify-content:center;
@@ -89,18 +76,13 @@ font-size:28px;
 background:rgba(255,255,255,0.2);
 padding:12px;
 border-radius:50%;
-transition:.3s;
-}
-
-.experts i:hover{
-background:rgba(255,255,255,0.4);
-transform:scale(1.2);
 }
 
 /* BUTTONS */
+
 .buttons{
 display:flex;
-gap:12px;
+gap:15px;
 justify-content:center;
 flex-wrap:wrap;
 }
@@ -112,20 +94,16 @@ font-size:18px;
 color:white;
 border:none;
 cursor:pointer;
-transition:.3s;
 display:flex;
 align-items:center;
 gap:8px;
-box-shadow:0 8px 20px rgba(0,0,0,0.35);
 }
 
 .register{background:#28a745;}
 .login{background:#007bff;}
-.ask{background:#ff9800;}
 
 button:hover{
-transform:scale(1.08);
-filter:brightness(1.1);
+transform:scale(1.05);
 }
 
 </style>
@@ -158,49 +136,11 @@ Ask questions from verified professionals like Lawyers, Doctors, Teachers, and E
 <i class="fa-solid fa-right-to-bracket"></i> Login
 </button>
 
-<button class="ask" onclick="goToAsk()">
-<i class="fa-solid fa-question"></i> Ask Question
-</button>
-
 </div>
 
 </div>
-
-<!-- FIREBASE -->
-
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
 <script>
-
-const firebaseConfig = {
-
-apiKey: "YOUR_REAL_FIREBASE_KEY",
-authDomain: "askexpert-b642b.firebaseapp.com",
-projectId: "askexpert-b642b",
-storageBucket: "askexpert-b642b.appspot.com",
-messagingSenderId: "407440869696",
-appId: "1:407440869696:web:504234dd881a7e875dd2a5"
-
-};
-
-firebase.initializeApp(firebaseConfig);
-
-const db = firebase.firestore();
-
-console.log("Firebase connected");
-
-/* LOGIN CHECK */
-
-function getUser(){
-
-try{
-return JSON.parse(localStorage.getItem("loggedInUser"));
-}catch{
-return null;
-}
-
-}
 
 function goRegister(){
 window.location.href="register.html";
@@ -208,20 +148,6 @@ window.location.href="register.html";
 
 function goLogin(){
 window.location.href="login.html";
-}
-
-function goToAsk(){
-
-let user=getUser();
-
-if(!user){
-alert("Please login first");
-window.location.href="login.html";
-return;
-}
-
-window.location.href="ask.html";
-
 }
 
 </script>
