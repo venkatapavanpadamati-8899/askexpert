@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>AskExpert Professional Dashboard</title>
+<title>AskExpert Admin Dashboard</title>
 
 <link rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -16,310 +16,242 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:Segoe UI, Arial;
+font-family:Segoe UI;
 }
 
 body{
-min-height:100vh;
+
 background:
-linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.7)),
-url("https://images.unsplash.com/photo-1553877522-43269d4ea984");
+linear-gradient(rgba(0,0,0,.7),rgba(0,0,0,.7)),
+url("https://images.unsplash.com/photo-1551434678-e076c223a692");
+
 background-size:cover;
-background-position:center;
+
 padding:30px;
+
 }
 
 .container{
-max-width:950px;
+
+max-width:1100px;
+
 margin:auto;
-background:rgba(255,255,255,0.95);
-padding:40px;
-border-radius:18px;
-box-shadow:0 20px 40px rgba(0,0,0,0.3);
-}
 
-.header{
-text-align:center;
-margin-bottom:25px;
-}
-
-.header img{
-width:70px;
-margin-bottom:10px;
-}
-
-h1{color:#333;}
-
-.icons{
-text-align:center;
-font-size:28px;
-margin-top:10px;
-margin-bottom:15px;
-}
-
-.icons i{
-margin:0 10px;
-color:#4c6ef5;
-}
-
-.chat-link,.logout-btn{
-display:inline-block;
-margin-top:10px;
-padding:10px 20px;
-border-radius:6px;
-font-weight:bold;
-text-decoration:none;
-color:white;
-}
-
-.chat-link{background:#4c6ef5;}
-.chat-link:hover{background:#364fc7;}
-
-.logout-btn{background:#f44336;}
-.logout-btn:hover{background:#c62828;}
-
-.filter{
-margin:25px 0;
-text-align:center;
-}
-
-select{
-padding:10px;
-border-radius:8px;
-border:1px solid #ccc;
-font-size:15px;
-}
-
-.question-card{
 background:white;
-padding:22px;
-margin:18px 0;
-border-radius:12px;
-box-shadow:0 8px 18px rgba(0,0,0,0.15);
+
+padding:35px;
+
+border-radius:15px;
+
+box-shadow:0 20px 40px rgba(0,0,0,.4);
+
 }
 
-textarea{
-width:100%;
-height:90px;
-margin-top:10px;
-padding:10px;
-border-radius:6px;
-border:1px solid #ccc;
-resize:none;
+h1{
+
+text-align:center;
+
+margin-bottom:20px;
+
+}
+
+.section{
+
+margin-top:30px;
+
+}
+
+.card{
+
+background:#f5f7ff;
+
+padding:15px;
+
+border-radius:10px;
+
+margin-bottom:12px;
+
+box-shadow:0 5px 12px rgba(0,0,0,.1);
+
 }
 
 button{
-margin-top:10px;
-padding:10px 15px;
-background:#2ecc71;
+
+padding:6px 12px;
+
 border:none;
-color:white;
+
 border-radius:6px;
-cursor:pointer;
-font-weight:bold;
-}
 
-button:hover{background:#27ae60;}
-
-.rating{
-margin-top:12px;
-}
-
-.rating button{
-background:#ffc107;
-color:black;
 margin:3px;
+
+cursor:pointer;
+
 }
 
-.timestamp{
-font-size:12px;
-color:gray;
-margin-top:5px;
+.delete{
+
+background:#e53935;
+
+color:white;
+
 }
 
-.answer-box{
-background:#f4f6ff;
-padding:10px;
-border-radius:6px;
-margin-top:10px;
+.ban{
+
+background:#fb8c00;
+
+color:white;
+
+}
+
+.view{
+
+background:#3f51b5;
+
+color:white;
+
+}
+
+.chat{
+
+background:#2ecc71;
+
+color:white;
+
 }
 
 </style>
+
 </head>
 
-<body onload="initDashboard()">
+<body onload="initAdmin()">
 
 <div class="container">
 
-<div class="header">
+<h1>AskExpert Admin Dashboard</h1>
 
-<img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
+<div class="section">
 
-<h1>AskExpert Professional Dashboard</h1>
+<h2>Registered Users</h2>
 
-<div class="icons">
-<i class="fa-solid fa-user-doctor"></i>
-<i class="fa-solid fa-scale-balanced"></i>
-<i class="fa-solid fa-laptop-code"></i>
-<i class="fa-solid fa-graduation-cap"></i>
-</div>
-
-<a href="chat.html" class="chat-link">💬 Open Chat</a>
-<a href="#" class="logout-btn" onclick="logout()">Logout</a>
+<div id="usersList"></div>
 
 </div>
 
-<div class="filter">
+<div class="section">
 
-<label>Select Profession:</label>
+<h2>Questions</h2>
 
-<select id="professionFilter" onchange="filterQuestions()">
-
-<option value="All">All</option>
-<option value="lawyer">Lawyer</option>
-<option value="doctor">Doctor</option>
-<option value="engineer">Engineer</option>
-<option value="teacher">Teacher</option>
-<option value="police">Police</option>
-<option value="business">Business Expert</option>
-<option value="finance">Financial Expert</option>
-<option value="marketing">Marketing Expert</option>
-<option value="startup">Startup Mentor</option>
-<option value="it">IT Support</option>
-<option value="psychologist">Psychologist</option>
-<option value="career">Career Advisor</option>
-
-</select>
+<div id="questionsList"></div>
 
 </div>
 
-<div id="questionsContainer"></div>
+<div class="section">
+
+<h2>Chats</h2>
+
+<div id="chatList"></div>
+
+</div>
+
+<div class="section">
+
+<h2>Documents</h2>
+
+<div id="docsList"></div>
+
+</div>
 
 </div>
 
 <script>
 
-/* SAFE JSON */
+/* SAFE DATA */
 
 function getData(key){
+
 try{
+
 return JSON.parse(localStorage.getItem(key)) || [];
+
 }catch(e){
+
 return [];
-}
+
 }
 
-/* FULL XSS PROTECTION */
+}
+
+/* XSS SAFE */
 
 function safe(text){
+
 if(!text) return "";
+
 return text.toString()
-.replace(/&/g,"&amp;")
+
 .replace(/</g,"&lt;")
-.replace(/>/g,"&gt;")
-.replace(/"/g,"&quot;")
-.replace(/'/g,"&#039;");
+
+.replace(/>/g,"&gt;");
+
 }
 
-let questions=[];
-let expertRatings={};
+/* ADMIN INIT */
 
-/* INIT */
+function initAdmin(){
 
-function initDashboard(){
+let user=JSON.parse(localStorage.getItem("loggedInUser"));
 
-let user=getData("loggedInUser");
+if(!user || user.role!=="admin"){
 
-if(!user){
-alert("Please login first");
+alert("Admin access only");
+
 window.location.href="login.html";
+
 return;
+
 }
 
-if(user.banned){
-alert("Your account is banned");
-window.location.href="login.html";
-return;
-}
-
-questions=getData("questions");
-expertRatings=getData("expertRatings") || {};
+loadUsers();
 
 loadQuestions();
 
-}
+loadChats();
 
-/* LOGOUT */
-
-function logout(){
-
-localStorage.removeItem("loggedInUser");
-
-alert("Logged out successfully");
-
-window.location.href="login.html";
+loadDocs();
 
 }
 
-/* LOAD QUESTIONS */
+/* USERS */
 
-function loadQuestions(filter="All"){
+function loadUsers(){
 
-let container=document.getElementById("questionsContainer");
+let users=getData("users");
+
+let container=document.getElementById("usersList");
 
 container.innerHTML="";
 
-let filtered=questions.filter(q=>{
-return filter==="All" ||
-(q.profession && q.profession.toLowerCase()===filter.toLowerCase());
-});
-
-if(filtered.length===0){
-container.innerHTML="<p style='text-align:center'>No questions available.</p>";
-return;
-}
-
-filtered.forEach(q=>{
-
-let avgRating="Not rated";
-
-if(expertRatings[q.profession] && expertRatings[q.profession].count>0){
-
-let r=expertRatings[q.profession];
-
-avgRating=(r.total/r.count).toFixed(1);
-
-}
+users.forEach((u,i)=>{
 
 let div=document.createElement("div");
 
-div.className="question-card";
+div.className="card";
 
 div.innerHTML=`
 
-<p><b>Question:</b> ${safe(q.question)}</p>
+<b>${safe(u.name)}</b> (${safe(u.email)})
 
-<p><b>Expert Required:</b> ${safe(q.profession)}</p>
+<br>
 
-<p class="timestamp">Asked on: ${safe(q.timestamp)}</p>
+Role: ${safe(u.role || "user")}
 
-<div class="answer-box"><b>Answer:</b> ${safe(q.answer || "No answer yet")}</div>
+<br>
 
-<textarea id="answer-${q.id}" placeholder="Write your answer...">${safe(q.answer || "")}</textarea>
+<button class="ban" onclick="banUser(${i})">Ban</button>
 
-<button onclick="submitAnswer(${q.id})">Submit Answer</button>
-
-<div class="rating">
-
-<p><b>Rate this expert:</b> ⭐ ${avgRating}</p>
-
-<button onclick="rateExpert('${q.profession}',5)">⭐5</button>
-<button onclick="rateExpert('${q.profession}',4)">⭐4</button>
-<button onclick="rateExpert('${q.profession}',3)">⭐3</button>
-<button onclick="rateExpert('${q.profession}',2)">⭐2</button>
-<button onclick="rateExpert('${q.profession}',1)">⭐1</button>
-
-</div>
+<button class="delete" onclick="deleteUser(${i})">Delete</button>
 
 `;
 
@@ -327,79 +259,149 @@ container.appendChild(div);
 
 });
 
-/* ENTER KEY SUBMIT */
-
-document.querySelectorAll("textarea").forEach(area=>{
-area.addEventListener("keypress",function(e){
-if(e.key==="Enter" && !e.shiftKey){
-e.preventDefault();
-submitAnswer(this.id.split("-")[1]);
 }
+
+/* BAN USER */
+
+function banUser(i){
+
+let users=getData("users");
+
+users[i].banned=true;
+
+localStorage.setItem("users",JSON.stringify(users));
+
+alert("User banned");
+
+loadUsers();
+
+}
+
+/* DELETE USER */
+
+function deleteUser(i){
+
+if(!confirm("Delete user?")) return;
+
+let users=getData("users");
+
+users.splice(i,1);
+
+localStorage.setItem("users",JSON.stringify(users));
+
+loadUsers();
+
+}
+
+/* QUESTIONS */
+
+function loadQuestions(){
+
+let questions=getData("questions");
+
+let container=document.getElementById("questionsList");
+
+container.innerHTML="";
+
+questions.forEach(q=>{
+
+let div=document.createElement("div");
+
+div.className="card";
+
+div.innerHTML=`
+
+<b>Question:</b> ${safe(q.question)}
+
+<br>
+
+Expert: ${safe(q.profession)}
+
+<br>
+
+Answer: ${safe(q.answer)}
+
+`;
+
+container.appendChild(div);
+
 });
+
+}
+
+/* CHAT */
+
+function loadChats(){
+
+let container=document.getElementById("chatList");
+
+container.innerHTML="";
+
+for(let key in localStorage){
+
+if(key.startsWith("chat_")){
+
+let chats=JSON.parse(localStorage.getItem(key));
+
+chats.forEach(c=>{
+
+let div=document.createElement("div");
+
+div.className="card";
+
+div.innerHTML=`
+
+<b>${safe(c.sender)}</b>: ${safe(c.text)}
+
+<br>
+
+${safe(c.time)}
+
+`;
+
+container.appendChild(div);
+
 });
 
 }
 
-/* SUBMIT ANSWER */
-
-function submitAnswer(id){
-
-let text=document.getElementById("answer-"+id).value.trim();
-
-if(text===""){
-alert("Please write an answer first");
-return;
 }
-
-let index=questions.findIndex(q=>q.id===id);
-
-if(index===-1) return;
-
-questions[index].answer=safe(text);
-
-localStorage.setItem("questions",JSON.stringify(questions));
-
-alert("Answer submitted successfully");
-
-loadQuestions(document.getElementById("professionFilter").value);
 
 }
 
-/* RATE EXPERT */
+/* DOCUMENTS */
 
-function rateExpert(expert,stars){
+function loadDocs(){
 
-let rated=localStorage.getItem("rated_"+expert);
+let docs=getData("documents");
 
-if(rated){
-alert("You already rated this expert");
-return;
-}
+let container=document.getElementById("docsList");
 
-if(!expertRatings[expert]){
-expertRatings[expert]={total:0,count:0};
-}
+container.innerHTML="";
 
-expertRatings[expert].total+=stars;
-expertRatings[expert].count+=1;
+docs.forEach(d=>{
 
-localStorage.setItem("expertRatings",JSON.stringify(expertRatings));
+let div=document.createElement("div");
 
-localStorage.setItem("rated_"+expert,true);
+div.className="card";
 
-let avg=(expertRatings[expert].total/expertRatings[expert].count).toFixed(1);
+div.innerHTML=`
 
-alert("Thanks! "+expert+" rating: ⭐ "+avg);
+<b>${safe(d.name)}</b>
 
-}
+<br>
 
-/* FILTER */
+Profession: ${safe(d.profession)}
 
-function filterQuestions(){
+<br>
 
-let filter=document.getElementById("professionFilter").value;
+<a href="${d.file}" target="_blank">View Document</a>
 
-loadQuestions(filter);
+`;
+
+container.appendChild(div);
+
+});
 
 }
 
