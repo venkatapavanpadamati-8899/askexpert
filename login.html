@@ -1,51 +1,54 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Login - AskExpert</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet"> 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
 
-*{box-sizing:border-box;margin:0;padding:0;font-family:'Poppins',sans-serif;}
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+font-family:'Poppins',sans-serif;
+}
 
 body{
 height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
-background: linear-gradient(rgba(0,0,0,0.45),rgba(0,0,0,0.55)),
-url("https://images.unsplash.com/photo-1556761175-4b46a572b786") center/cover no-repeat;
-animation:bgMove 15s infinite alternate;
-overflow:hidden;
-}
 
-@keyframes bgMove{
-0%{transform:scale(1);}
-100%{transform:scale(1.08);}
+background:
+linear-gradient(rgba(0,0,0,0.45),rgba(0,0,0,0.55)),
+url("https://images.unsplash.com/photo-1556761175-4b46a572b786")
+center/cover no-repeat;
+
 }
 
 .login-box{
 width:380px;
 padding:40px;
+
 border-radius:20px;
+
 background:rgba(255,255,255,0.15);
 backdrop-filter:blur(18px);
+
 border:1px solid rgba(255,255,255,0.2);
+
 box-shadow:0 20px 60px rgba(0,0,0,0.4);
+
 color:white;
 text-align:center;
-animation:floatCard 6s ease-in-out infinite;
-}
-
-@keyframes floatCard{
-0%{transform:translateY(0);}
-50%{transform:translateY(-8px);}
-100%{transform:translateY(0);}
 }
 
 .logo{
@@ -92,7 +95,9 @@ outline:none;
 font-size:15px;
 }
 
-input::placeholder{color:#ddd;}
+input::placeholder{
+color:#ddd;
+}
 
 button{
 width:100%;
@@ -102,7 +107,7 @@ border:none;
 font-size:16px;
 cursor:pointer;
 background:linear-gradient(45deg,#00c6ff,#0072ff);
-transition:0.3s;
+color:white;
 }
 
 button:hover{
@@ -121,10 +126,16 @@ font-size:14px;
 padding:10px;
 }
 
-.register{background:linear-gradient(45deg,#4caf50,#388e3c);}
-.ask-btn{background:linear-gradient(45deg,#ff9800,#f57c00);}
+.register{
+background:linear-gradient(45deg,#4caf50,#388e3c);
+}
+
+.ask-btn{
+background:linear-gradient(45deg,#ff9800,#f57c00);
+}
 
 </style>
+
 </head>
 
 <body>
@@ -133,21 +144,32 @@ padding:10px;
 
 <div class="logo">
 <i class="fa-solid fa-user-doctor"></i>
-<span class="ask">Ask</span><span class="expert">Expert</span>
+<span class="ask">Ask</span>
+<span class="expert">Expert</span>
 </div>
 
-<p class="subtitle">Ask questions from verified professionals</p>
+<p class="subtitle">
+Ask questions from verified professionals
+</p>
 
-<form onsubmit="return loginUser()">
+<form onsubmit="return loginUser()" autocomplete="off">
 
 <div class="input-group">
 <i class="fa fa-envelope"></i>
-<input id="email" type="email" placeholder="Email Address" required>
+
+<input id="email"
+type="email"
+placeholder="Email Address"
+required>
 </div>
 
 <div class="input-group">
 <i class="fa fa-lock"></i>
-<input id="password" type="password" placeholder="Password" required>
+
+<input id="password"
+type="password"
+placeholder="Password"
+required>
 </div>
 
 <button id="loginBtn" type="submit">Login</button>
@@ -155,37 +177,112 @@ padding:10px;
 </form>
 
 <div class="navigation">
-<button class="register" onclick="location.href='register.html'">Register</button>
-<button class="ask-btn" onclick="location.href='ask.html'">Ask Question</button>
+
+<button class="register"
+onclick="location.href='register.html'">
+Register
+</button>
+
+<button class="ask-btn"
+onclick="location.href='ask.html'">
+Ask Question
+</button>
+
 </div>
 
 </div>
 
 <script>
 
-/* LOGIN USING LOCAL STORAGE */
+/* SAFE USERS STORAGE */
+
+function getUsers(){
+
+try{
+
+let data = JSON.parse(localStorage.getItem("users"));
+
+return Array.isArray(data) ? data : [];
+
+}catch{
+
+return [];
+
+}
+
+}
+
+/* CREATE DEFAULT ADMIN */
+
+function createAdmin(){
+
+let users = getUsers();
+
+let adminExists = users.some(
+u => u.email === "venkatapavanpadamati1@gmail.com"
+);
+
+if(!adminExists){
+
+users.push({
+
+id:Date.now(),
+
+name:"Pavan Admin",
+
+email:"venkatapavanpadamati1@gmail.com",
+
+password:"Pavan@123",
+
+role:"admin",
+
+verified:true,
+
+createdAt:new Date().toLocaleString()
+
+});
+
+localStorage.setItem("users",JSON.stringify(users));
+
+}
+
+}
+
+createAdmin();
+
+/* LOGIN */
 
 function loginUser(){
 
-let email = document.getElementById("email").value.trim().toLowerCase();
-let password = document.getElementById("password").value.trim();
-let btn = document.getElementById("loginBtn");
+let email=document.getElementById("email").value.trim().toLowerCase();
 
-if(!email || !password){
-alert("Please enter both email and password");
+let password=document.getElementById("password").value.trim();
+
+let btn=document.getElementById("loginBtn");
+
+/* EMAIL VALIDATION */
+
+if(!/^\S+@\S+\.\S+$/.test(email)){
+
+alert("Invalid email format");
+
 return false;
+
 }
 
-btn.disabled = true;
-btn.innerText = "Logging in...";
+/* BUTTON LOADING */
 
-/* GET USERS */
+btn.disabled=true;
 
-let users = JSON.parse(localStorage.getItem("users")) || [];
+btn.innerText="Logging in...";
 
-/* FIND USER */
+let users=getUsers();
 
-let user = users.find(u => u.email === email && u.password === password);
+let user=users.find(
+u => u.email===email && u.password===password
+);
+
+/* INVALID LOGIN */
 
 if(!user){
 
@@ -198,11 +295,11 @@ return false;
 
 }
 
-/* CHECK BAN */
+/* BAN CHECK */
 
-if(user.banned === true){
+if(user.banned){
 
-alert("Your account has been banned");
+alert("Your account is banned");
 
 btn.disabled=false;
 btn.innerText="Login";
@@ -213,19 +310,28 @@ return false;
 
 /* SAVE SESSION */
 
-localStorage.setItem("loggedInUser", JSON.stringify(user));
+localStorage.setItem(
+"loggedInUser",
+JSON.stringify(user)
+);
 
 alert("Login successful");
 
-/* REDIRECT BASED ON ROLE */
+/* REDIRECT */
 
-if(user.role === "expert"){
+if(user.role==="admin"){
 
-window.location.href = "expert-dashboard.html";
+window.location.href="admin.html";
 
-}else{
+}
+else if(user.role==="expert"){
 
-window.location.href = "ask.html";
+window.location.href="dashboard.html";
+
+}
+else{
+
+window.location.href="ask.html";
 
 }
 
@@ -237,4 +343,3 @@ return false;
 
 </body>
 </html>
-
