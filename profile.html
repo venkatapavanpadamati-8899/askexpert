@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -234,15 +235,11 @@ Welcome to your expert profile dashboard.
 </div>
 
 <div class="tab-content" id="questionsTab">
-
 <div id="questionsContainer"></div>
-
 </div>
 
 <div class="tab-content" id="answersTab">
-
 <div id="answersContainer"></div>
-
 </div>
 
 <button onclick="location.href='chat.html'">Contact Expert</button>
@@ -256,19 +253,22 @@ Welcome to your expert profile dashboard.
 /* SAFE JSON */
 
 function getData(key){
+
 try{
-let data = JSON.parse(localStorage.getItem(key));
-return data || null;
-}catch(e){
+return JSON.parse(localStorage.getItem(key));
+}catch{
 return null;
 }
+
 }
 
 /* SAFE ARRAY */
 
 function getArray(key){
+
 let data=getData(key);
 return Array.isArray(data) ? data : [];
+
 }
 
 /* FULL XSS PROTECTION */
@@ -286,22 +286,28 @@ return text.toString()
 
 }
 
-/* LOGIN CHECK AFTER LOAD */
+/* LOGIN CHECK */
 
 window.onload=function(){
 
-let user=getData("loggedInUser");
+let user =
+getData("loggedInUser") ||
+getData("user");
 
 if(!user){
+
 alert("Please login first");
 window.location.href="login.html";
 return;
+
 }
 
 if(user.banned){
+
 alert("Your account is banned");
 window.location.href="login.html";
 return;
+
 }
 
 loadProfile(user);
@@ -312,19 +318,33 @@ loadProfile(user);
 
 function loadProfile(profile){
 
-document.getElementById("profileName").innerText=safe(profile.name || "Expert");
+document.getElementById("profileName").innerText =
+safe(profile.name || "Expert");
 
-document.getElementById("profileProfession").innerText=safe(profile.profession || "Professional");
+document.getElementById("profileProfession").innerText =
+safe(profile.profession || "Professional");
 
-document.getElementById("profileExperience").innerText="💼 "+safe(profile.experience || "5 Years")+" Experience";
+document.getElementById("profileExperience").innerText =
+"💼 "+safe(profile.experience || "5 Years")+" Experience";
 
-document.getElementById("profileFee").innerText="💰 "+safe(profile.fee || "₹300")+" Fee";
+document.getElementById("profileFee").innerText =
+"💰 "+safe(profile.fee || "₹300")+" Fee";
+
+/* PROFILE IMAGE */
+
+let img=document.getElementById("profileImg");
+
+if(profile.image){
+img.src=profile.image;
+}
+
+/* RATING */
 
 let rating=parseInt(profile.rating) || 5;
 
 document.getElementById("profileRating").innerText="⭐".repeat(rating);
 
-/* LOAD QUESTIONS */
+/* QUESTIONS */
 
 let questions=getArray("questions");
 
@@ -334,22 +354,33 @@ let aContainer=document.getElementById("answersContainer");
 qContainer.innerHTML="";
 aContainer.innerHTML="";
 
+let qCount=0;
+let aCount=0;
+
 questions.forEach(q=>{
 
 if(profile.profession &&
 q.profession &&
 q.profession.toLowerCase()!==profile.profession.toLowerCase()) return;
 
+qCount++;
+
 let qDiv=document.createElement("div");
+
 qDiv.className="question-card";
+
 qDiv.innerHTML="<b>Question:</b> "+safe(q.question);
 
 qContainer.appendChild(qDiv);
 
 if(q.answer){
 
+aCount++;
+
 let aDiv=document.createElement("div");
+
 aDiv.className="question-card";
+
 aDiv.innerHTML="<b>Answer:</b> "+safe(q.answer);
 
 aContainer.appendChild(aDiv);
@@ -357,6 +388,14 @@ aContainer.appendChild(aDiv);
 }
 
 });
+
+if(qCount===0){
+qContainer.innerHTML="<p>No questions yet</p>";
+}
+
+if(aCount===0){
+aContainer.innerHTML="<p>No answers yet</p>";
+}
 
 }
 
